@@ -4,6 +4,7 @@
 #include "system.hpp"
 #include "motor.hpp"
 #include "rotaryEncoder.hpp"
+#include "stopLight.hpp"
 
 #define PIN_BUTTON     (D0)
 #define PIN_I2C_SCL    (D1)
@@ -26,8 +27,10 @@ systemState_t currentState = SYSTEM_STATE_SETUP;
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_MAX_PWM / MOTOR_RAMP_TIME_MS, MOTOR_MAX_PWM / MOTOR_RAMP_TIME_MS);
 motor_t * motor = &motorObj;
 
-Encoder encoder(PIN_ENCODER_A, PIN_ENCODER_B);
-//rotaryEncoder encoder = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, 1);
+rotaryEncoder encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, 1);
+rotaryEncoder * encoder = & encoderObj;
+
+stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
 
 void setup()
 {

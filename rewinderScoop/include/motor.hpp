@@ -23,7 +23,8 @@ typedef struct
 } motor_t;
 
 
-#define MOTOR_INIT(_PIN, _RAMP_UP_SCALE, _RAMP_DOWN_SCALE) { \
+#define MOTOR_INIT(_PIN, _RAMP_UP_SCALE, _RAMP_DOWN_SCALE) \
+{ \
     .pin = _PIN,    \
     .state = MOTOR_STATE_IDLE,  \
     .counterMs = 0, \

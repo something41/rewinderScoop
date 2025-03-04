@@ -12,7 +12,7 @@ void stopLight__setRed(stopLight_t * stopLight)
 {
     digitalWrite(stopLight->greenPin, LED_OFF);
     digitalWrite(stopLight->yellowPin, LED_OFF);
-        digitalWrite(stopLight->redPin, LED_ON);
+    digitalWrite(stopLight->redPin, LED_ON);
 
 }
 void stopLight__setYellow(stopLight_t * stopLight)

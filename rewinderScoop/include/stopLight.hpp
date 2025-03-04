@@ -10,6 +10,13 @@ typedef struct
     const uint32_t greenPin;
 } stopLight_t;
 
+#define STOPLIGHT_INIT(_redPin, _yellowPin, _greenPin) \
+{ \
+    .redPin    = _redPin, \
+    .yellowPin = _yellowPin, \
+    .greenPin  = _greenPin, \
+}
+
 
 void stopLight__clear(stopLight_t * stopLight);
 void stopLight__setRed(stopLight_t * stopLight);
