@@ -28,9 +28,10 @@ motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_MAX_PWM / MOTOR_RAMP_TIME_MS, MOT
 motor_t * motor = &motorObj;
 
 rotaryEncoder encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, 1);
-rotaryEncoder * encoder = & encoderObj;
+rotaryEncoder * encoder = &encoderObj;
 
 stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
+stopLight_t * stopLight = &stopLightObj;
 
 void setup()
 {
