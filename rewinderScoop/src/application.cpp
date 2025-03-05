@@ -24,8 +24,8 @@ systemState_t currentState = SYSTEM_STATE_SETUP;
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, 10);
 motor_t * motor = &motorObj;
 
-rotaryEncoder encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, 1);
-rotaryEncoder * encoder = &encoderObj;
+rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, 1);
+rotaryEncoder_t * encoder = &encoderObj;
 
 stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
 stopLight_t * stopLight = &stopLightObj;

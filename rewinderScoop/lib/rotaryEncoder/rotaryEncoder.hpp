@@ -1,23 +1,43 @@
 #include "stdint.h"
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include "Encoder.h"
+#include "debounce.hpp"
+
+typedef enum
+{
+    IDLE,
+    RUNNING,
+} rotaryEncoderMode_t;
+
 typedef struct
 {
     const double scaleFactor;
     Encoder encoder;
-} rotaryEncoder;
+    debounce_t debounceError;
+    rotaryEncoderMode_t mode;
+    uint32_t previousCount;
+} rotaryEncoder_t;
 
 
 
 #define ROTARY_ENCODER_INIT(_pinA, _pinB, _scaleFactor) { \
     .scaleFactor = _scaleFactor, \
     .encoder = {_pinA, _pinB}, \
+    .debounceError = DEBOUNCE_INIT(1000), \
+    .mode = IDLE, \
+    .previousCount = 0, \
 }
 
-double rotaryEncoder__getScaledValue(rotaryEncoder * encoder);
+double rotaryEncoder__getScaledValue(rotaryEncoder_t * encoder);
 
-void rotaryEncoder__setScaledValue(rotaryEncoder * encoder, double value);
+void rotaryEncoder__setScaledValue(rotaryEncoder_t * encoder, double value);
 
-void rotaryEncoder__reset(rotaryEncoder * encoder);
+void rotaryEncoder__reset(rotaryEncoder_t * encoder);
 
-void rotaryEncoder__update(rotaryEncoder * encoder);
+void rotaryEncoder__update(rotaryEncoder_t * encoder);
+
+void rotaryEncoder__enterIdleMode(rotaryEncoder_t * encoder);
+
+void rotaryEncoder__enterRunMode(rotaryEncoder_t * encoder);
+
+boolean rotaryEncoder__stallErrorDetected(rotaryEncoder_t * encoder);

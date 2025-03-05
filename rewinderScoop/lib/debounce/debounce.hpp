@@ -1,6 +1,9 @@
 #include "stdint.h"
 #include "Arduino.h"
 
+#ifndef DEBOUNCE_H_
+#define DEBOUNCE_H_
+
 #define DEFAULT_DEBOUNCE_TIME_MS (10)
 
 typedef struct 
@@ -29,4 +32,5 @@ bool debounce__getStatus(debounce_t * debounce);
 
 void debounce__init(debounce_t * debounce);
 
+#endif
 
