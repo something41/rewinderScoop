@@ -27,3 +27,9 @@ void stopLight__setGreen(stopLight_t * stopLight)
     digitalWrite(stopLight->yellowPin, LED_OFF);
     digitalWrite(stopLight->greenPin, LED_ON);
 }
+
+
+void stopLight__update(stopLight_t * stopLight)
+{
+    
+}

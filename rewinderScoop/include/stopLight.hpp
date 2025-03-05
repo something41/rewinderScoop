@@ -22,4 +22,5 @@ void stopLight__clear(stopLight_t * stopLight);
 void stopLight__setRed(stopLight_t * stopLight);
 void stopLight__setYellow(stopLight_t * stopLight);
 void stopLight__setGreen(stopLight_t * stopLight);
+void stopLight__update(stopLight_t * stopLight);
 

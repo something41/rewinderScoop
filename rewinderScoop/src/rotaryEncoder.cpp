@@ -14,3 +14,8 @@ void rotaryEncoder__reset(rotaryEncoder * encoder)
 {
     encoder->encoder.write(0);
 }
+
+void rotaryEncoder__update(rotaryEncoder * encoder)
+{
+    
+}
