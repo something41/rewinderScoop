@@ -1,24 +1,19 @@
 #include "stdint.h"
 #include "Arduino.h"
+#include "debounce.hpp"
 
 #define DEFAULT_DEBOUNCE_TIME_MS (10)
 
 typedef struct 
 {
     const uint32_t pin;
-    const uint32_t debounceTimeMs;
-    bool status;
-    bool previousStatus;
-    uint32_t startTime;
+    debounce_t debounce;
 } button_t;
 
 #define BUTTON_INIT(_pin) \
 { \
     .pin = _pin, \
-    .debounceTimeMs = DEFAULT_DEBOUNCE_TIME_MS, \
-    .status = false, \
-    .previousStatus = false, \
-    .startTime = 0, \
+    .debounce = DEBOUNCE_INIT_DEFAULT(), \
 }
 
 //return true if state changes

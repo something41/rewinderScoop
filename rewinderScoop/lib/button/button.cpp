@@ -1,40 +1,18 @@
 #include "button.hpp"
 
-
-
 bool button__update(button_t * button)
 {
     bool sampledValue = digitalRead(button->pin);
-    uint32_t timer = millis();
-
-    if (sampledValue != button->previousStatus)
-    {
-        button->startTime = timer;
-    }
-
-    button->previousStatus = sampledValue;
-
-    if (timer - button->startTime  > button->debounceTimeMs)
-    {
-        if (sampledValue != button->status)
-        {
-            button->status = sampledValue;
-            return true;
-        }
-    }
-
-    return false;
+    return debounce__update(&button->debounce, sampledValue);
 }
 
 bool button__getStatus(button_t * button)
 {
-    return button->status;
+    return debounce__getStatus(&button->debounce);
 }
 
 void button__init(button_t * button)
 {
-    button->previousStatus = false;
-    button->status = false;
-    button->startTime = 0;
+    debounce__init(&button->debounce);
 }
 
