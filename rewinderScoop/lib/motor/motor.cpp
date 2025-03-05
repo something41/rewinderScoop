@@ -44,6 +44,11 @@ static uint32_t calculateSlewRate(motor_t * motor, uint32_t desiredSpeed)
     return desiredSpeed;
 }
 
+void motor__init(motor_t * motor)
+{
+    
+}
+
 void motor__setSpeed(motor_t * motor, uint32_t speed)
 {
     speed = validateMotorPercentage(speed);

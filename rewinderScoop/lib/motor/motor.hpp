@@ -48,3 +48,5 @@ void motor__setSpeed(motor_t * motor, uint32_t speed);
 void motor__setSpeedInstantly(motor_t * motor, uint32_t speed);
 
 void motor__setPWMInstantly(motor_t * motor, uint32_t freq);
+
+void motor__init(motor_t * motor);

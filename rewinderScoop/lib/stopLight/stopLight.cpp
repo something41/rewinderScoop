@@ -33,3 +33,8 @@ void stopLight__update(stopLight_t * stopLight)
 {
     
 }
+
+void stopLight__init(stopLight_t * stopLight)
+{
+    
+}

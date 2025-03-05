@@ -41,3 +41,5 @@ void rotaryEncoder__enterIdleMode(rotaryEncoder_t * encoder);
 void rotaryEncoder__enterRunMode(rotaryEncoder_t * encoder);
 
 boolean rotaryEncoder__stallErrorDetected(rotaryEncoder_t * encoder);
+
+void rotaryEncoder__init(rotaryEncoder_t * encoder);
