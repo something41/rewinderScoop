@@ -2,6 +2,8 @@
 #define RUN_SPEED_1_DEFAULT (100)
 #define RUN_SPEED_2_DEFAULT (35)
 
+#define ENCODER_ERROR_DEBOUNCE_MS (1000)
+
 #define PIN_BUTTON     (D0)
 #define PIN_I2C_SCL    (D1)
 #define PIN_I2C_SCA    (D2)

@@ -18,6 +18,7 @@ typedef struct
     debounce_t debounceError;
     rotaryEncoderMode_t mode;
     int32_t previousCount;
+    int32_t currentCount;
 } rotaryEncoder_t;
 
 #define ROTARY_ENCODER_INIT_FULL(_pinA, _pinB, _scaleFactor, _debounceAmount) \
@@ -27,11 +28,12 @@ typedef struct
     .debounceError = DEBOUNCE_INIT(_debounceAmount), \
     .mode = IDLE, \
     .previousCount = 0, \
+    .currentCount = 0, \
 }
 
 #define ROTARY_ENCODER_NO_ERROR(_pinA, _pinB, _scaleFactor) ROTARY_ENCODER_INIT_FULL(_pinA, _pinB, _scaleFactor, 0)
 
-#define ROTARY_ENCODER_INIT(_pinA, _pinB, _scaleFactor) ROTARY_ENCODER_INIT_FULL(_pinA, _pinB, _scaleFactor, 1000)
+#define ROTARY_ENCODER_INIT(_pinA, _pinB, _scaleFactor, _debounce) ROTARY_ENCODER_INIT_FULL(_pinA, _pinB, _scaleFactor, _debounce)
 
 double rotaryEncoder__getScaledValue(rotaryEncoder_t * encoder);
 

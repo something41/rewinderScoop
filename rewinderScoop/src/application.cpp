@@ -14,7 +14,7 @@ system_t rewinder = SYSTEM_INIT();
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_RAMP_TIME_MS);
 motor_t * motor = &motorObj;
 
-rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, .1);
+rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, .1, ENCODER_ERROR_DEBOUNCE_MS);
 rotaryEncoder_t * encoder = &encoderObj;
 
 stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
@@ -44,7 +44,7 @@ static inline uint32_t getCurrentJobDistance()
 	return rewinder.jobSelections[rewinder.jobIndex].runs[1].distanceInFeet;
 }
 
-/*
+
 static void printStateTransition()
 {
 	if (rewinder.currentState != rewinder.previousState)
@@ -76,11 +76,11 @@ static void printStateTransition()
 
 	rewinder.previousState = rewinder.currentState;
 }
-*/
+
 
 void setup()
 {
-	//Serial.begin(115200);
+	Serial.begin(115200);
 	system__init();
 
 
@@ -103,7 +103,7 @@ void loop()
 			break;
 		case SYSTEM_STATE_START:
 			nextState = startState();
-			//fall through
+			break;
 		case SYSTEM_STATE_TRANISITION_TO_RUN:
 			nextState = transitionToRunState();
 			break;
@@ -149,6 +149,7 @@ systemState_t startState()
 {
 	rotaryEncoder__reset(encoder);
 	stopLight__setGreen(stopLight);
+	rotaryEncoder__enterRunMode(encoder);
 
 	rewinder.runIndex = 0;
 	
@@ -202,6 +203,7 @@ systemState_t finishState()
 
 	motor__stop(motor);
 	stopLight__setRed(stopLight);
+	rotaryEncoder__enterIdleMode(encoder);
 
 	return SYSTEM_STATE_SETUP;
 }
@@ -212,7 +214,7 @@ systemState_t errorState()
 	// stay in here forever until device gets rebooted
 	motor__stop(motor);
 	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
-	stopLight__error(stopLight);
+	//stopLight__error(stopLight);
 	return SYSTEM_STATE_ERROR;
 }
 

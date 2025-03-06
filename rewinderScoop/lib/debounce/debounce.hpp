@@ -16,7 +16,7 @@ typedef struct
 
 #define DEBOUNCE_INIT(_debounceTimeMs) \
 { \
-    .debounceTimeMs = DEFAULT_DEBOUNCE_TIME_MS, \
+    .debounceTimeMs = _debounceTimeMs, \
     .status = false, \
     .previousSample = false, \
     .startTime = 0, \

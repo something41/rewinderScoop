@@ -22,8 +22,14 @@ void rotaryEncoder__update(rotaryEncoder_t * encoder)
 {
     if (encoder->mode == RUNNING)
     {
-        encoder->previousCount = encoder->encoder.read();
+        encoder->currentCount = encoder->encoder.read();
+        if (encoder->currentCount < 0)
+        {
+            encoder->currentCount = 0;
+            encoder->encoder.write(0);
+        }
         debounce__update(&encoder->debounceError, encoder->previousCount == encoder->encoder.read());
+        encoder->previousCount = encoder->encoder.read();
     }
 }
 
@@ -48,6 +54,7 @@ boolean rotaryEncoder__stallErrorDetected(rotaryEncoder_t * encoder)
     {
         return false;
     }
+
 
     return debounce__getStatus(&encoder->debounceError);
 }
