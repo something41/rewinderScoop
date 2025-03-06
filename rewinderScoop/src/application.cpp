@@ -94,8 +94,8 @@ void loop()
 
 systemState_t setupState()
 {
+	rewinder.jobIndex = knob__getSelection(knob);
 
-	// display job choice on ssd
 	uint32_t jobLength = getCurrentJobDistance();
 
 	stopLight__setRed(stopLight);
