@@ -71,11 +71,6 @@ void motor__setPWMInstantly(motor_t * motor, uint32_t freq)
     analogWrite(motor->pin, freq);
 }
 
-void motor__setState(motor_t * motor, motorState_t state)
-{
-    motor->state = state;
-}
-
 void motor__stop(motor_t * motor)
 {
     analogWrite(motor->pin, 0);

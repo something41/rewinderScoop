@@ -1,6 +1,5 @@
 #include <Arduino.h>
 
-#include "configuration.hpp"
 #include "application.hpp"
 
 #include "motor.hpp"
@@ -9,9 +8,8 @@
 #include "sevenSegmentDisplay.hpp"
 #include "button.hpp"
 
-job_t testJob = CREATE_JOB(100, 25);
+system_t rewinder = SYSTEM_INIT();
 
-systemState_t currentState = SYSTEM_STATE_SETUP;
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, 10);
 motor_t * motor = &motorObj;
 
@@ -25,7 +23,22 @@ sevenSegmentDisplay_t sevenSegmentDisplayObj = SEVEN_SEGMENT_DISPLAY_INIT(DEFAUL
 sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 
 button_t buttonObj = BUTTON_INIT(PIN_BUTTON);
-button_t * button = &buttonObj;
+button_t * goButton = &buttonObj;
+
+static inline uint32_t getCurrentRunDistance()
+{
+	return rewinder.jobSelections[rewinder.jobIndex].runs[rewinder.runIndex].distanceInFeet;
+}
+
+static inline motorPercentage getCurrentRunSpeed()
+{
+	return rewinder.jobSelections[rewinder.jobIndex].runs[rewinder.runIndex].percentSpeed;
+}
+
+static inline uint32_t getCurrentJobDistance()
+{
+	return rewinder.jobSelections[rewinder.jobIndex].runs[0].distanceInFeet + rewinder.jobSelections[rewinder.jobIndex].runs[1].distanceInFeet;
+}
 
 void setup()
 {
@@ -42,9 +55,11 @@ void loop()
 	//First update all processes
 	system__update();
 
-	systemState_t nextState = currentState;
+	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
+/*
+	systemState_t nextState = rewinder.currentState;
 
-	switch(currentState)
+	switch(rewinder.currentState)
 	{
 	case SYSTEM_STATE_SETUP:
 		nextState = setupState();
@@ -55,7 +70,7 @@ void loop()
 	case SYSTEM_STATE_TRANISITION_TO_RUN_0:
 		nextState = transitionToRun0State();
 		break;
-	case SYSTEM_STATE_RUN_0:
+	case SYSTEM_STATE_RUN_0:p
 		nextState = run0State();
 		break;
 	case SYSTEM_STATE_TRANISITION_TO_RUN_1:
@@ -71,6 +86,8 @@ void loop()
 		nextState = errorState();
 	}
 
+	rewinder.currentState = nextState;
+*/
 	waitForNextMs(currentMillis);
 
 }
@@ -79,9 +96,13 @@ systemState_t setupState()
 {
 
 	// display job choice on ssd
+	uint32_t jobLength = getCurrentJobDistance();
 
+	stopLight__setRed(stopLight);
 
-	if (button__getStatus(button))
+	sevenSegementDisplay__displayValue(sevenSegmentDisplay, jobLength);
+
+	if (button__getStatus(goButton))
 	{
 		return SYSTEM_STATE_START;
 	}
@@ -91,16 +112,14 @@ systemState_t setupState()
 systemState_t startState()
 {
 	rotaryEncoder__reset(encoder);
-	return SYSTEM_STATE_TRANISITION_TO_RUN_0;
+	stopLight__setGreen(stopLight);
+
+	rewinder.runIndex = 0;
+	
+	return SYSTEM_STATE_TRANISITION_TO_RUN;
 }
 
-systemState_t finishState()
-{
-	motor__stop(motor);
-	return SYSTEM_STATE_SETUP;
-}
-
-systemState_t run0State()
+systemState_t runState()
 {
 	bool errorDetected = rotaryEncoder__stallErrorDetected(encoder);
 
@@ -113,41 +132,59 @@ systemState_t run0State()
 
 	sevenSegementDisplay__displayValue(sevenSegmentDisplay, feetPulled);
 
-	return feetPulled >= testJob.runs[0].distanceInFeet ? SYSTEM_STATE_TRANISITION_TO_RUN_1 : SYSTEM_STATE_RUN_0;
+	if (feetPulled >= getCurrentRunDistance())
+	{
+		// Hooray! We finished a run
+		rewinder.runIndex++;
+	}
+
+	return rewinder.runIndex >= 2 ? SYSTEM_STATE_TRANISITION_TO_RUN : SYSTEM_STATE_RUN;
 }
 
-systemState_t run1State()
+systemState_t transitionToRunState()
 {
-	return SYSTEM_STATE_RUN_1;
+	motor__setSpeed(motor, getCurrentRunSpeed());
+
+	if (rewinder.runIndex == 0)
+	{
+		stopLight__setGreen(stopLight);
+	}
+	else
+	{
+		//assume its index 1
+		stopLight__setYellow(stopLight);
+	}
+
+	return SYSTEM_STATE_RUN;
 }
 
-systemState_t transitionToRun0State()
-{
-	motor__setSpeed(motor, testJob.runs[0].percentSpeed);
 
-	return SYSTEM_STATE_RUN_0;
-}
-
-systemState_t transitionToRun1State()
+systemState_t finishState()
 {
-	return SYSTEM_STATE_RUN_1;
+	motor__stop(motor);
+	stopLight__setRed(stopLight);
+
+	return SYSTEM_STATE_SETUP;
 }
 
 systemState_t errorState()
 {
-
+	// something went wrong display error
+	// stay in here forever until device gets rebooted
+	motor__stop(motor);
+	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
+	stopLight__error(stopLight);
+	return SYSTEM_STATE_ERROR;
 }
 
 void system__update()
 {
-	//motor__update(motor);
-	//motor__setPWMInstantly(motor, 100);
-	motor__setSpeed(motor, 0);
-
+	motor__update(motor);
 	rotaryEncoder__update(encoder);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	stopLight__update(stopLight);
-	button__update(button);
+	button__update(goButton);
+
 }
 
 
@@ -156,14 +193,12 @@ void system__init()
 	sevenSegmentDisplay__init(sevenSegmentDisplay);
 	motor__init(motor);
 	stopLight__init(stopLight);
-	button__init(button);
+	button__init(goButton);
 	rotaryEncoder__init(encoder);
+
 }
 
 void waitForNextMs(uint32_t currentMs)
 {
-	while (millis() - currentMs < ONE_MS)
-	{
-
-	}
+	while (millis() - currentMs < ONE_MS){}
 }
