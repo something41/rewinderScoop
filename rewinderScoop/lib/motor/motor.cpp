@@ -32,7 +32,11 @@ static motorPercentage calculatePercentFromFrequency(motorPwmFrequency freq)
 static uint32_t calculateSlewRate(motor_t * motor, uint32_t desiredSpeed)
 {
 
-    if (desiredSpeed > motor->currentSpeed)
+    if (desiredSpeed == motor->currentSpeed)
+    {
+        //no work to do
+    }
+    else if (desiredSpeed > motor->currentSpeed)
     {
         desiredSpeed = clamp(desiredSpeed, 0, motor->slewRate * motor->counterMs);
     }
@@ -53,6 +57,7 @@ void motor__setSpeed(motor_t * motor, uint32_t speed)
 {
     speed = validateMotorPercentage(speed);
     motor->requestedSpeed = speed;
+    motor->counterMs = 0;
 }
 
 void motor__setSpeedInstantly(motor_t * motor, uint32_t speed)
@@ -60,6 +65,7 @@ void motor__setSpeedInstantly(motor_t * motor, uint32_t speed)
     speed = validateMotorPercentage(speed);
     motor->requestedSpeed = speed;
     motor->currentSpeed = speed;
+    motor->counterMs = 0;
     analogWrite(motor->pin, calculateFrequencyFromPercent(speed));
 }
 
@@ -68,19 +74,26 @@ void motor__setPWMInstantly(motor_t * motor, uint32_t freq)
     freq = validatePwmFrequency(freq);
     motor->requestedSpeed = calculatePercentFromFrequency(freq);
     motor->currentSpeed = motor->requestedSpeed;
+    motor->counterMs = 0;
     analogWrite(motor->pin, freq);
 }
 
 void motor__stop(motor_t * motor)
 {
     analogWrite(motor->pin, 0);
+    motor->currentSpeed = 0;
+    motor->requestedSpeed = 0;
+    motor->counterMs = 0;
 }
 
 void motor__update(motor_t * motor)
 {
+    
     motor->currentSpeed = calculateSlewRate(motor, motor->requestedSpeed);
     uint32_t frequency = calculateFrequencyFromPercent(motor->currentSpeed);
 
     analogWrite(motor->pin, frequency);
+
+    motor->counterMs++;
 
 }

@@ -30,6 +30,7 @@ typedef struct
 typedef struct
 {
 	systemState_t currentState;
+    systemState_t previousState;
 	const job_t jobSelections[12];
 	uint32_t runIndex;
     uint32_t jobIndex;
@@ -51,6 +52,7 @@ typedef struct
 
 #define SYSTEM_INIT() { \
     .currentState = SYSTEM_STATE_SETUP, \
+    .previousState = SYSTEM_STATE_SETUP, \
     .jobSelections = { \
             JOB_0, \
             JOB_1, \

@@ -4,12 +4,12 @@ bool debounce__update(debounce_t * debounce, boolean sampledValue)
 {
     uint32_t timer = millis();
 
-    if (sampledValue != debounce->previousStatus)
+    if (sampledValue != debounce->previousSample)
     {
         debounce->startTime = timer;
     }
 
-    debounce->previousStatus = sampledValue;
+    debounce->previousSample = sampledValue;
 
     if (timer - debounce->startTime  > debounce->debounceTimeMs)
     {
@@ -30,7 +30,7 @@ bool debounce__getStatus(debounce_t * debounce)
 
 void debounce__init(debounce_t * debounce)
 {
-    debounce->previousStatus = false;
+    debounce->previousSample = false;
     debounce->status = false;
     debounce->startTime = 0;
 }

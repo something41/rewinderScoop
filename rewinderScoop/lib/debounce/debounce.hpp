@@ -10,7 +10,7 @@ typedef struct
 {
     const uint32_t debounceTimeMs;
     bool status;
-    bool previousStatus;
+    bool previousSample;
     uint32_t startTime;
 } debounce_t;
 
@@ -18,7 +18,7 @@ typedef struct
 { \
     .debounceTimeMs = DEFAULT_DEBOUNCE_TIME_MS, \
     .status = false, \
-    .previousStatus = false, \
+    .previousSample = false, \
     .startTime = 0, \
 }
 

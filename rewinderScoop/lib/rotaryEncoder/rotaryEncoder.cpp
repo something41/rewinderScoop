@@ -16,7 +16,6 @@ void rotaryEncoder__reset(rotaryEncoder_t * encoder)
     encoder->mode = IDLE;
     encoder->previousCount = 0;
     debounce__init(&encoder->debounceError);
-
 }
 
 void rotaryEncoder__update(rotaryEncoder_t * encoder)
@@ -45,5 +44,10 @@ void rotaryEncoder__enterIdleMode(rotaryEncoder_t * encoder)
 
 boolean rotaryEncoder__stallErrorDetected(rotaryEncoder_t * encoder)
 {
+    if (encoder->debounceError.debounceTimeMs == 0)
+    {
+        return false;
+    }
+
     return debounce__getStatus(&encoder->debounceError);
 }

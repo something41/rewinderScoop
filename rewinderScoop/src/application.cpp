@@ -11,10 +11,10 @@
 
 system_t rewinder = SYSTEM_INIT();
 
-motor_t motorObj = MOTOR_INIT(PIN_MOTOR, 10);
+motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_RAMP_TIME_MS);
 motor_t * motor = &motorObj;
 
-rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, 1);
+rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, .1);
 rotaryEncoder_t * encoder = &encoderObj;
 
 stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
@@ -41,14 +41,48 @@ static inline motorPercentage getCurrentRunSpeed()
 
 static inline uint32_t getCurrentJobDistance()
 {
-	return rewinder.jobSelections[rewinder.jobIndex].runs[0].distanceInFeet + rewinder.jobSelections[rewinder.jobIndex].runs[1].distanceInFeet;
+	return rewinder.jobSelections[rewinder.jobIndex].runs[1].distanceInFeet;
 }
+
+/*
+static void printStateTransition()
+{
+	if (rewinder.currentState != rewinder.previousState)
+	{
+		switch (rewinder.currentState)
+		{
+			case SYSTEM_STATE_SETUP:
+				Serial.println("SYSTEM_STATE_SETUP");
+				break;
+			case SYSTEM_STATE_START:
+				Serial.println("SYSTEM_STATE_START");
+				break;
+			case SYSTEM_STATE_TRANISITION_TO_RUN:
+				Serial.println("SYSTEM_STATE_TRANISITION_TO_RUN");
+				break;
+			case SYSTEM_STATE_RUN:
+				Serial.println("SYSTEM_STATE_RUN");
+				break;
+			case SYSTEM_STATE_FINISH:
+				Serial.println("SYSTEM_STATE_FINISH");
+				break;
+			case SYSTEM_STATE_ERROR:
+				Serial.println("SYSTEM_STATE_ERROR");
+				break;
+			default:
+				break;
+		}
+	}
+
+	rewinder.previousState = rewinder.currentState;
+}
+*/
 
 void setup()
 {
-	Serial.begin(115200);
-	pinMode(D0, INPUT_PULLUP);
+	//Serial.begin(115200);
 	system__init();
+
 
 }
 
@@ -88,6 +122,8 @@ void loop()
 
 	rewinder.currentState = nextState;
 
+	printStateTransition();
+
 	waitForNextMs(currentMillis);
 
 }
@@ -119,28 +155,6 @@ systemState_t startState()
 	return SYSTEM_STATE_TRANISITION_TO_RUN;
 }
 
-systemState_t runState()
-{
-	bool errorDetected = rotaryEncoder__stallErrorDetected(encoder);
-
-	if (errorDetected)
-	{
-		return SYSTEM_STATE_ERROR;
-	}
-
-	uint32_t feetPulled = rotaryEncoder__getScaledValue(encoder);
-
-	sevenSegementDisplay__displayValue(sevenSegmentDisplay, feetPulled);
-
-	if (feetPulled >= getCurrentRunDistance())
-	{
-		// Hooray! We finished a run
-		rewinder.runIndex++;
-	}
-
-	return rewinder.runIndex >= 2 ? SYSTEM_STATE_TRANISITION_TO_RUN : SYSTEM_STATE_RUN;
-}
-
 systemState_t transitionToRunState()
 {
 	motor__setSpeed(motor, getCurrentRunSpeed());
@@ -158,8 +172,34 @@ systemState_t transitionToRunState()
 	return SYSTEM_STATE_RUN;
 }
 
+systemState_t runState()
+{
+	bool errorDetected = rotaryEncoder__stallErrorDetected(encoder);
+
+	if (errorDetected)
+	{
+		return SYSTEM_STATE_ERROR;
+	}
+
+	uint32_t feetPulled = rotaryEncoder__getScaledValue(encoder);
+
+	sevenSegementDisplay__displayValue(sevenSegmentDisplay, feetPulled);
+
+	if (feetPulled >= getCurrentRunDistance())
+	{
+		// Hooray! We finished a run
+		rewinder.runIndex++;
+
+		return rewinder.runIndex >= 2 ? SYSTEM_STATE_FINISH : SYSTEM_STATE_TRANISITION_TO_RUN;
+	}
+
+	return SYSTEM_STATE_RUN;
+}
+
+
 systemState_t finishState()
 {
+
 	motor__stop(motor);
 	stopLight__setRed(stopLight);
 

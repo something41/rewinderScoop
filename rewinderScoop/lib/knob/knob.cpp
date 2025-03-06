@@ -10,6 +10,8 @@ uint32_t knob__update(knob_t * knob)
 {
     //todo check thresholds
     uint32_t reading = analogRead(knob->pin);
+
+    return 0;
 }
 
 uint32_t knob__getSelection(knob_t * knob)
