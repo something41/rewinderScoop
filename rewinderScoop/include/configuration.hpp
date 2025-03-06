@@ -9,10 +9,10 @@
 #define PIN_I2C_SCA    (D2)
 #define PIN_LED_RED    (D3)
 #define PIN_LED_YELLOW (D4)
-#define PIN_LED_GREEN  (D8)
+#define PIN_LED_GREEN  (D5)
 #define PIN_ENCODER_A  (D6)
 #define PIN_ENCODER_B  (D7)
-#define PIN_MOTOR      (D5)
+#define PIN_MOTOR      (D8)
 #define PIN_KNOB       (A0)
 #define MOTOR_SLEW_RATE (10)
 
