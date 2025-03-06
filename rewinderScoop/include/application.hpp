@@ -47,7 +47,7 @@ typedef struct
 	.runs = {CREATE_RUN(_distance0, _speed0), CREATE_RUN(_distance1, _speed1)}, \
 }
 
-#define CREATE_JOB(_distance0, _distance1) CREATE_JOB_FULL_INIT(_distance0, RUN_SPEED_1_DEFAULT, _distance1, RUN_SPEED_2_DEFAULT) 
+#define CREATE_JOB(_distance0, _distance1) CREATE_JOB_FULL_INIT(_distance0, RUN_SPEED_1_DEFAULT, _distance0 + _distance1, RUN_SPEED_2_DEFAULT) 
 
 #define SYSTEM_INIT() { \
     .currentState = SYSTEM_STATE_SETUP, \

@@ -11,6 +11,7 @@
 #define PIN_ENCODER_A  (D6)
 #define PIN_ENCODER_B  (D7)
 #define PIN_MOTOR      (D5)
+#define PIN_KNOB       (A0)
 #define MOTOR_SLEW_RATE (10)
 
 // replace CREATE_JOB with CREATE_JOB_FULL_INIT if you need to control speed.

@@ -7,6 +7,7 @@
 #include "stopLight.hpp"
 #include "sevenSegmentDisplay.hpp"
 #include "button.hpp"
+#include "knob.hpp"
 
 system_t rewinder = SYSTEM_INIT();
 
@@ -24,6 +25,9 @@ sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 
 button_t buttonObj = BUTTON_INIT(PIN_BUTTON);
 button_t * goButton = &buttonObj;
+
+knob_t knobObj = KNOB_INIT(PIN_KNOB);
+knob_t * knob = &knobObj;
 
 static inline uint32_t getCurrentRunDistance()
 {
@@ -55,39 +59,35 @@ void loop()
 	//First update all processes
 	system__update();
 
-	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
-/*
+
 	systemState_t nextState = rewinder.currentState;
 
 	switch(rewinder.currentState)
 	{
-	case SYSTEM_STATE_SETUP:
-		nextState = setupState();
-		break;
-	case SYSTEM_STATE_START:
-		nextState = startState();
-		//fall through
-	case SYSTEM_STATE_TRANISITION_TO_RUN_0:
-		nextState = transitionToRun0State();
-		break;
-	case SYSTEM_STATE_RUN_0:p
-		nextState = run0State();
-		break;
-	case SYSTEM_STATE_TRANISITION_TO_RUN_1:
-		nextState = transitionToRun1State();
-		break;
-	case SYSTEM_STATE_RUN_1:
-		nextState = run1State();
-		break;
-	case SYSTEM_STATE_FINISH:
-		nextState = finishState();
-		break;
-	case SYSTEM_STATE_ERROR:
-		nextState = errorState();
+		case SYSTEM_STATE_SETUP:
+			nextState = setupState();
+			break;
+		case SYSTEM_STATE_START:
+			nextState = startState();
+			//fall through
+		case SYSTEM_STATE_TRANISITION_TO_RUN:
+			nextState = transitionToRunState();
+			break;
+		case SYSTEM_STATE_RUN:
+			nextState = runState();
+			break;
+		case SYSTEM_STATE_FINISH:
+			nextState = finishState();
+			break;
+		case SYSTEM_STATE_ERROR:
+			nextState = errorState();
+			break;
+		default:
+			break;
 	}
 
 	rewinder.currentState = nextState;
-*/
+
 	waitForNextMs(currentMillis);
 
 }
@@ -158,7 +158,6 @@ systemState_t transitionToRunState()
 	return SYSTEM_STATE_RUN;
 }
 
-
 systemState_t finishState()
 {
 	motor__stop(motor);
@@ -184,9 +183,9 @@ void system__update()
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	stopLight__update(stopLight);
 	button__update(goButton);
+	knob__update(knob);
 
 }
-
 
 void system__init()
 {
@@ -195,6 +194,7 @@ void system__init()
 	stopLight__init(stopLight);
 	button__init(goButton);
 	rotaryEncoder__init(encoder);
+	knob__init(knob);
 
 }
 
