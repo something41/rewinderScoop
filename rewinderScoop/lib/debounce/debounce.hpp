@@ -9,26 +9,26 @@
 typedef struct 
 {
     const uint32_t debounceTimeMs;
-    bool status;
-    bool previousSample;
-    uint32_t startTime;
+    uint32_t status;
+    uint32_t previousSample;
+    uint32_t counterMs;
 } debounce_t;
 
 #define DEBOUNCE_INIT(_debounceTimeMs) \
 { \
     .debounceTimeMs = _debounceTimeMs, \
-    .status = false, \
-    .previousSample = false, \
-    .startTime = 0, \
+    .status = 0, \
+    .previousSample = 0, \
+    .counterMs = 0, \
 }
 
 #define DEBOUNCE_INIT_DEFAULT() DEBOUNCE_INIT(DEFAULT_DEBOUNCE_TIME_MS)
 
 
 //return true if state changes
-bool debounce__update(debounce_t * debounce, boolean sampledValue);
+bool debounce__update(debounce_t * debounce, uint32_t sampledValue);
 
-bool debounce__getStatus(debounce_t * debounce);
+uint32_t debounce__getStatus(debounce_t * debounce);
 
 void debounce__init(debounce_t * debounce);
 

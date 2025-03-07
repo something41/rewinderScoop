@@ -2,8 +2,6 @@
 #include "Arduino.h"
 #include "debounce.hpp"
 
-#define DEFAULT_DEBOUNCE_TIME_MS (10)
-
 typedef struct 
 {
     const uint32_t pin;

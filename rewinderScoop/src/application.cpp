@@ -9,6 +9,7 @@
 #include "button.hpp"
 #include "knob.hpp"
 
+
 system_t rewinder = SYSTEM_INIT();
 
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_RAMP_TIME_MS);
@@ -80,7 +81,9 @@ static void printStateTransition()
 
 void setup()
 {
+#if (ENABLE_DEBUG)
 	Serial.begin(115200);
+#endif
 	system__init();
 
 
@@ -121,8 +124,9 @@ void loop()
 	}
 
 	rewinder.currentState = nextState;
-
+#if (ENABLE_DEBUG)
 	printStateTransition();
+#endif
 
 	waitForNextMs(currentMillis);
 

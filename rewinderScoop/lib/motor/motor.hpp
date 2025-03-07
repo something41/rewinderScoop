@@ -2,6 +2,8 @@
 
 #define MOTOR_RAMP_TIME_MS (10)
 #define MOTOR_MAX_PWM (255)
+#define MOTOR_SLEW_RATE (10)
+
 
 typedef uint32_t motorPercentage;
 typedef uint32_t motorPwmFrequency;

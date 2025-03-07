@@ -13,7 +13,7 @@ bool button__getStatus(button_t * button)
 
 void button__init(button_t * button)
 {
-    //pinMode(button->pin, INPUT_PULLUP);
+    pinMode(button->pin, INPUT);
     debounce__init(&button->debounce);
 }
 

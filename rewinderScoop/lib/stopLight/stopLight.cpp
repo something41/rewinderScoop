@@ -57,7 +57,9 @@ void stopLight__update(stopLight_t * stopLight)
 
 void stopLight__init(stopLight_t * stopLight)
 {
-    
+    pinMode(stopLight->redPin, OUTPUT);
+    pinMode(stopLight->yellowPin, OUTPUT);
+    pinMode(stopLight->greenPin, OUTPUT);
 }
 
 void stopLight__error(stopLight_t * stopLight)

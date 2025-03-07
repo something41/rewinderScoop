@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <stdint.h>
+#include <debounce.hpp>
 
 #define MAX_VOLTAGE (5)
 
@@ -16,18 +17,23 @@
 #define RESISTOR_10 0
 #define RESISTOR_11 0
 
+#define MAX_ADC_VAL (0b1111111111)
+
 
 typedef struct
 {
     const uint32_t pin;
-    uint32_t selection;
+    uint32_t currentReading;
+    uint32_t previousReading;
     uint32_t thresholds[12];
+
 } knob_t;
 
 //todo math here
 #define KNOB_INIT(_pin) { \
     .pin = _pin, \
-    .selection = 0, \
+    .currentReading = 0, \
+    .previousReading = 0, \
     .thresholds = {0}, \
 }
 
