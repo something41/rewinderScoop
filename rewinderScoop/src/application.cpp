@@ -4,7 +4,7 @@
 
 #include "motor.hpp"
 #include "rotaryEncoder.hpp"
-#include "stopLight.hpp"
+#include "ledDisplay.hpp"
 #include "sevenSegmentDisplay.hpp"
 #include "button.hpp"
 #include "knob.hpp"
@@ -18,8 +18,8 @@ motor_t * motor = &motorObj;
 rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, ENCODER_SCALE_VALUE_INCHES_PER_TICK, ENCODER_ERROR_DEBOUNCE_MS);
 rotaryEncoder_t * encoder = &encoderObj;
 
-stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
-stopLight_t * stopLight = &stopLightObj;
+ledDisplay_t stopLightObj = LED_DISPLAY_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
+ledDisplay_t * stopLight = &stopLightObj;
 
 sevenSegmentDisplay_t sevenSegmentDisplayObj = SEVEN_SEGMENT_DISPLAY_INIT(DEFAULT_I2C_ADDRESS);
 sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
@@ -135,7 +135,7 @@ systemState_t setupState()
 
 	uint32_t jobLength = getCurrentJobDistance();
 
-	stopLight__setRed(stopLight);
+	ledDisplay__setStop(stopLight);
 
 	sevenSegementDisplay__displayValue(sevenSegmentDisplay, jobLength);
 
@@ -149,7 +149,6 @@ systemState_t setupState()
 systemState_t startState()
 {
 	rotaryEncoder__reset(encoder);
-	stopLight__setGreen(stopLight);
 	rotaryEncoder__enterRunMode(encoder);
 
 	rewinder.runIndex = 0;
@@ -163,12 +162,12 @@ systemState_t transitionToRunState()
 
 	if (rewinder.runIndex == 0)
 	{
-		stopLight__setGreen(stopLight);
+		ledDisplay__setFast(stopLight);
 	}
 	else
 	{
 		//assume its index 1
-		stopLight__setYellow(stopLight);
+		ledDisplay__setSlow(stopLight);
 	}
 
 	return SYSTEM_STATE_RUN;
@@ -202,7 +201,7 @@ systemState_t finishState()
 {
 
 	motor__stop(motor);
-	stopLight__setRed(stopLight);
+	ledDisplay__setStop(stopLight);
 	rotaryEncoder__enterIdleMode(encoder);
 
 	return SYSTEM_STATE_SETUP;
@@ -214,7 +213,7 @@ systemState_t errorState()
 	// stay in here forever until device gets rebooted
 	motor__stop(motor);
 	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
-	stopLight__error(stopLight);
+	ledDisplay__setError(stopLight);
 	return SYSTEM_STATE_ERROR;
 }
 
@@ -223,7 +222,7 @@ void system__update()
 	motor__update(motor);
 	rotaryEncoder__update(encoder);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
-	stopLight__update(stopLight);
+	ledDisplay__update(stopLight);
 	button__update(goButton);
 	knob__update(knob);
 
@@ -233,7 +232,7 @@ void system__init()
 {
 	sevenSegmentDisplay__init(sevenSegmentDisplay);
 	motor__init(motor);
-	stopLight__init(stopLight);
+	ledDisplay__init(stopLight);
 	button__init(goButton);
 	rotaryEncoder__init(encoder);
 	knob__init(knob);
