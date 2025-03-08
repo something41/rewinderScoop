@@ -15,7 +15,7 @@ system_t rewinder = SYSTEM_INIT();
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_RAMP_TIME_MS);
 motor_t * motor = &motorObj;
 
-rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, .1, ENCODER_ERROR_DEBOUNCE_MS);
+rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, ENCODER_SCALE_VALUE_INCHES_PER_TICK, ENCODER_ERROR_DEBOUNCE_MS);
 rotaryEncoder_t * encoder = &encoderObj;
 
 stopLight_t stopLightObj = STOPLIGHT_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
@@ -85,8 +85,6 @@ void setup()
 	Serial.begin(115200);
 #endif
 	system__init();
-
-
 }
 
 void loop()
@@ -95,7 +93,6 @@ void loop()
 
 	//First update all processes
 	system__update();
-
 
 	systemState_t nextState = rewinder.currentState;
 
@@ -201,7 +198,6 @@ systemState_t runState()
 	return SYSTEM_STATE_RUN;
 }
 
-
 systemState_t finishState()
 {
 
@@ -218,7 +214,7 @@ systemState_t errorState()
 	// stay in here forever until device gets rebooted
 	motor__stop(motor);
 	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
-	//stopLight__error(stopLight);
+	stopLight__error(stopLight);
 	return SYSTEM_STATE_ERROR;
 }
 

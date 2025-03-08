@@ -39,13 +39,11 @@ static uint32_t calculateSlewRate(motor_t * motor, uint32_t desiredSpeed)
     else if (desiredSpeed > motor->currentSpeed)
     {
         desiredSpeed = clamp(desiredSpeed, 0, motor->slewRate * motor->counterMs);
-
     }
     else
     {
         desiredSpeed = clamp(desiredSpeed, motor->slewRate * motor->counterMs, MAX_SPEED);
     }
-
 
     motor->counterMs++;
     return desiredSpeed;

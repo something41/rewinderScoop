@@ -3,17 +3,9 @@
 #define RUN_SPEED_2_DEFAULT (35)
 
 #define ENCODER_ERROR_DEBOUNCE_MS (1000)
+#define ENCODER_SCALE_VALUE_INCHES_PER_TICK (.01)
 
-#define PIN_BUTTON     (D8)
-#define PIN_I2C_SCL    (D1)
-#define PIN_I2C_SCA    (D2)
-#define PIN_LED_RED    (D0)
-#define PIN_LED_YELLOW (D3)
-#define PIN_LED_GREEN  (D4)
-#define PIN_ENCODER_A  (D6)
-#define PIN_ENCODER_B  (D7)
-#define PIN_MOTOR      (D5)
-#define PIN_KNOB       (A0)
+
 
 #define ENABLE_DEBUG (1)
 
@@ -32,3 +24,15 @@
 #define JOB_9  CREATE_JOB(190, 19)
 #define JOB_10 CREATE_JOB(200, 20)
 #define JOB_11 CREATE_JOB(210, 21)
+
+
+#define PIN_BUTTON     (D8)
+#define PIN_I2C_SCL    (D1)
+#define PIN_I2C_SCA    (D2)
+#define PIN_LED_RED    (D0)
+#define PIN_LED_YELLOW (D3)
+#define PIN_LED_GREEN  (D4)
+#define PIN_ENCODER_A  (D6)
+#define PIN_ENCODER_B  (D7)
+#define PIN_MOTOR      (D5)
+#define PIN_KNOB       (A0)

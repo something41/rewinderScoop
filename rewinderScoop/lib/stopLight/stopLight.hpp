@@ -3,6 +3,14 @@
 #define LED_OFF (HIGH)
 #define LED_ON  (LOW)
 
+
+typedef enum
+{
+    RED,
+    YELLOW,
+    GREEN,
+    CLEAR,
+} stopLight_display_type_t;
 typedef struct
 {
     const uint32_t redPin;
@@ -10,6 +18,8 @@ typedef struct
     const uint32_t greenPin;
     uint32_t errorCounter;
     bool showingError;
+    stopLight_display_type_t displayType;
+
 } stopLight_t;
 
 #define STOPLIGHT_INIT(_redPin, _yellowPin, _greenPin) \
@@ -19,6 +29,7 @@ typedef struct
     .greenPin  = _greenPin, \
     .errorCounter = 0, \
     .showingError = false, \
+    .displayType = CLEAR, \
 }
 
 
