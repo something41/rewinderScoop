@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "application.hpp"
+#include "multiplexer.hpp"
 
 #include "motor.hpp"
 #include "rotaryEncoder.hpp"

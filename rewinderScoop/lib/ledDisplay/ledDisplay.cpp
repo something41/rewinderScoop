@@ -36,7 +36,7 @@ static void processError(ledDisplay_t * ledDisplay)
     
     ledDisplay->error.counterMs += 1;
 
-    if (ledDisplay->error.counterMs == LED_ERROR_DISPLAY_TIME_MS)
+     if (ledDisplay->error.counterMs == LED_ERROR_DISPLAY_TIME_MS)
     {
         setYellow(ledDisplay);
 
@@ -52,6 +52,8 @@ static void processError(ledDisplay_t * ledDisplay)
         setRed(ledDisplay);
     }
     
+
+
 }
 void ledDisplay__setClear(ledDisplay_t * ledDisplay)
 {
