@@ -8,7 +8,7 @@
 #include "sevenSegmentDisplay.hpp"
 #include "button.hpp"
 #include "knob.hpp"
-
+#include "dial.hpp"
 
 system_t rewinder = SYSTEM_INIT();
 
@@ -27,8 +27,10 @@ sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 button_t buttonObj = BUTTON_INIT(PIN_BUTTON);
 button_t * goButton = &buttonObj;
 
-knob_t knobObj = KNOB_INIT(PIN_KNOB);
+knob_t knobObj = KNOB_DEFAULT_INIT(PIN_KNOB);
 knob_t * knob = &knobObj;
+
+dial_t dial = DIAL_INIT(0, 1);
 
 static inline uint32_t getCurrentRunDistance()
 {
@@ -137,6 +139,10 @@ systemState_t setupState()
 
 	ledDisplay__setStop(stopLight);
 
+	if (jobLength == 5) {
+		Serial.println(rewinder.jobIndex);
+	}
+
 	sevenSegementDisplay__displayValue(sevenSegmentDisplay, jobLength);
 
 	if (button__getStatus(goButton))
@@ -152,7 +158,7 @@ systemState_t startState()
 	rotaryEncoder__enterRunMode(encoder);
 
 	rewinder.runIndex = 0;
-	
+
 	return SYSTEM_STATE_TRANISITION_TO_RUN;
 }
 
@@ -219,12 +225,13 @@ systemState_t errorState()
 
 void system__update()
 {
+	knob__update(knob); //should be updated before displays and buttons
 	motor__update(motor);
 	rotaryEncoder__update(encoder);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	ledDisplay__update(stopLight);
 	button__update(goButton);
-	knob__update(knob);
+
 
 }
 

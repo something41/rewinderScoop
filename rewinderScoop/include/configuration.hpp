@@ -12,6 +12,19 @@
 
 // replace CREATE_JOB with CREATE_JOB_FULL_INIT if you need to control speed.
 
+#define JOB_0  CREATE_JOB(0, 0)
+#define JOB_1  CREATE_JOB(1, 0)
+#define JOB_2  CREATE_JOB(2, 0)
+#define JOB_3  CREATE_JOB(3, 0)
+#define JOB_4  CREATE_JOB(4, 0)
+#define JOB_5  CREATE_JOB(5, 0)
+#define JOB_6  CREATE_JOB(6, 0)
+#define JOB_7  CREATE_JOB(7, 0)
+#define JOB_8  CREATE_JOB(8, 0)
+#define JOB_9  CREATE_JOB(9, 0)
+#define JOB_10 CREATE_JOB(10, 0)
+#define JOB_11 CREATE_JOB(11, 0)
+#if 0
 #define JOB_0  CREATE_JOB(100, 10)
 #define JOB_1  CREATE_JOB(110, 11)
 #define JOB_2  CREATE_JOB(120, 12)
@@ -24,6 +37,7 @@
 #define JOB_9  CREATE_JOB(190, 19)
 #define JOB_10 CREATE_JOB(200, 20)
 #define JOB_11 CREATE_JOB(210, 21)
+#endif
 
 
 #define PIN_BUTTON     (D8)
