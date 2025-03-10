@@ -6,7 +6,9 @@
 
 #define DEFAULT_DEBOUNCE_TIME_MS (10)
 
-typedef struct 
+#define DEBOUNCE_DISABLED_TIME_MS (0)
+
+typedef struct
 {
     const uint32_t debounceTimeMs;
     uint32_t status;
@@ -31,6 +33,8 @@ bool debounce__update(debounce_t * debounce, uint32_t sampledValue);
 uint32_t debounce__getStatus(debounce_t * debounce);
 
 void debounce__init(debounce_t * debounce);
+
+uint32_t debounce__getDebounceTimeMs(debounce_t * debounce);
 
 #endif
 

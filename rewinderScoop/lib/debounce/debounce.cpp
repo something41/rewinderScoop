@@ -12,7 +12,7 @@ bool debounce__update(debounce_t * debounce, uint32_t sampledValue)
                 return true;
             }
 
-        } 
+        }
     }
     else {
         debounce->counterMs = 0;
@@ -36,3 +36,8 @@ void debounce__init(debounce_t * debounce)
     debounce->counterMs = 0;
 }
 
+
+uint32_t debounce__getDebounceTimeMs(debounce_t * debounce)
+{
+    return debounce->debounceTimeMs;
+}
