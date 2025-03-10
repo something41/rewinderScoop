@@ -1,5 +1,5 @@
 #include "stdint.h"
-#define ENCODER_OPTIMIZE_INTERRUPTS
+//#define ENCODER_OPTIMIZE_INTERRUPTS
 #include "Encoder.h"
 #include "debounce.hpp"
 

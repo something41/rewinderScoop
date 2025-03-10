@@ -10,7 +10,7 @@
 #include "knob.hpp"
 #include "dial.hpp"
 
-#include "rotaryEncoderWithZ.hpp"
+//#include "rotaryEncoderWithZ.hpp"
 //#include "rotaryEncoder.hpp"
 
 system_t rewinder = SYSTEM_INIT();
