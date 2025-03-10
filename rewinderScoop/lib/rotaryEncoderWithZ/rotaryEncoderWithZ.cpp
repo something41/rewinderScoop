@@ -12,13 +12,13 @@ void rotaryEncoderWithZ__init(rotaryEncoderWithZ_t * encoder)
     attachInterruptArg(digitalPinToInterrupt(encoder->z.pin), zISR, encoder, RISING);
 }
 
-uint32_t rotaryEncoderWithZ__update(rotaryEncoderMode_t * encoder)
+uint32_t rotaryEncoderWithZ__update(rotaryEncoderWithZ_t * encoder)
 {
 
     return 0;
 }
 
-uint32_t rotaryEncoderWithZ__getReading(rotaryEncoderMode_t * encoder)
+uint32_t rotaryEncoderWithZ__getReading(rotaryEncoderWithZ_t * encoder)
 {
     return encoder->z.count * encoder->z.scale;
 }

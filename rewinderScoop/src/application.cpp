@@ -11,7 +11,7 @@
 #include "dial.hpp"
 
 #include "rotaryEncoderWithZ.hpp"
-#include "rotaryEncoder.hpp"
+//#include "rotaryEncoder.hpp"
 
 system_t rewinder = SYSTEM_INIT();
 
