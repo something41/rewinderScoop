@@ -1,6 +1,5 @@
 #include "stdint.h"
 //#define ENCODER_OPTIMIZE_INTERRUPTS
-#include "Encoder.h"
 #include "debounce.hpp"
 
 #define ENCODER_BYPASS_ERROR_DEBOUNCE (0)

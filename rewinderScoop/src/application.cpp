@@ -27,13 +27,14 @@ ledDisplay_t * stopLight = &stopLightObj;
 sevenSegmentDisplay_t sevenSegmentDisplayObj = SEVEN_SEGMENT_DISPLAY_INIT(DEFAULT_I2C_ADDRESS);
 sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 
-button_t buttonObj = BUTTON_INIT(PIN_BUTTON);
-button_t * goButton = &buttonObj;
+button_t startButtonObj = BUTTON_INIT(PIN_START_BUTTON);
+button_t * startButton = &startButtonObj;
 
-knob_t knobObj = KNOB_DEFAULT_INIT(PIN_KNOB);
+knob_t knobObj = KNOB_INIT(PIN_KNOB_A, PIN_KNOB_B, PIN_KNOB_C);
 knob_t * knob = &knobObj;
 
-dial_t dial = DIAL_INIT(0, 1);
+dial_t customDistanceDialObj = DIAL_INIT(D14, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MIN, CUSTOM_KNOB_RESOLUTION);
+dial_t * customDistanceDial = &customDistanceDialObj;
 
 static inline uint32_t getCurrentRunDistance()
 {
@@ -50,6 +51,20 @@ static inline uint32_t getCurrentJobDistance()
 	return rewinder.jobSelections[rewinder.jobIndex].runs[1].distanceInFeet;
 }
 
+static inline uint32_t getCustomDistance2(uint32_t value)
+{
+	return (1 - CUSTOM_PERCENT_FAST) * value;
+}
+static inline uint32_t getCustomDistance1(uint32_t value)
+{
+	return value - getCustomDistance2(value);
+}
+
+static void setCustomDistance(uint32_t value)
+{
+	rewinder.jobSelections[CUSTOM_JOB_INDEX].runs[0].distanceInFeet = getCustomDistance1(value);
+	rewinder.jobSelections[CUSTOM_JOB_INDEX].runs[1].distanceInFeet = getCustomDistance2(value);
+}
 
 static void printStateTransition()
 {
@@ -139,20 +154,30 @@ void loop()
 systemState_t setupState()
 {
 
+	uint32_t selection = knob__getSelection(knob);
 
-	rewinder.jobIndex = knob__getSelection(knob);
+
+
+	if (selection == KNOB_MAX_VALUE)
+	{
+		// custom mode enabled
+		uint32_t customDistance  = dial__getReading(customDistanceDial);
+		setCustomDistance(customDistance);
+		rewinder.jobIndex = CUSTOM_JOB_INDEX;
+	}
+	else
+	{
+		rewinder.jobIndex = knob__getSelection(knob);
+	}
 
 	uint32_t jobLength = getCurrentJobDistance();
 
-	ledDisplay__setStop(stopLight);
 
-	if (jobLength == 5) {
-		Serial.println(rewinder.jobIndex);
-	}
+	ledDisplay__setStop(stopLight);
 
 	sevenSegementDisplay__displayValue(sevenSegmentDisplay, jobLength);
 
-	if (button__getStatus(goButton))
+	if (button__getStatus(startButton))
 	{
 		return SYSTEM_STATE_START;
 	}
@@ -237,7 +262,8 @@ void system__update()
 	//rotaryEncoder__update(encoder);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	ledDisplay__update(stopLight);
-	button__update(goButton);
+	button__update(startButton);
+	dial__update(customDistanceDial);
 
 
 }
@@ -247,9 +273,10 @@ void system__init()
 	sevenSegmentDisplay__init(sevenSegmentDisplay);
 	motor__init(motor);
 	ledDisplay__init(stopLight);
-	button__init(goButton);
+	button__init(startButton);
 	//rotaryEncoder__init(encoder);
 	knob__init(knob);
+	dial__init(customDistanceDial);
 
 }
 

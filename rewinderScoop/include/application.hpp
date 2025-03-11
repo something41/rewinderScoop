@@ -3,7 +3,7 @@
 
 #define ONE_MS         (1)
 
-typedef enum 
+typedef enum
 {
 	SYSTEM_STATE_SETUP = 0,
 	SYSTEM_STATE_START,
@@ -31,7 +31,7 @@ typedef struct
 {
 	systemState_t currentState;
     systemState_t previousState;
-	const job_t jobSelections[12];
+	job_t jobSelections[11];
 	uint32_t runIndex;
     uint32_t jobIndex;
 } system_t;
@@ -48,7 +48,7 @@ typedef struct
 	.runs = {CREATE_RUN(_distance0, _speed0), CREATE_RUN(_distance1, _speed1)}, \
 }
 
-#define CREATE_JOB(_distance0, _distance1) CREATE_JOB_FULL_INIT(_distance0, RUN_SPEED_1_DEFAULT, _distance0 + _distance1, RUN_SPEED_2_DEFAULT) 
+#define CREATE_JOB(_distance0, _distance1) CREATE_JOB_FULL_INIT(_distance0, RUN_SPEED_1_DEFAULT, _distance0 + _distance1, RUN_SPEED_2_DEFAULT)
 
 #define SYSTEM_INIT() { \
     .currentState = SYSTEM_STATE_SETUP, \
@@ -65,12 +65,10 @@ typedef struct
             JOB_8, \
             JOB_9, \
             JOB_10, \
-            JOB_11, \
         }, \
-    .runIndex = 0, \
-    .jobIndex = 0, \
 } \
 
+#define CUSTOM_JOB_INDEX (10)
 
 void system__init();
 void system__update();
