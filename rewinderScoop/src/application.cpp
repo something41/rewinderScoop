@@ -1,3 +1,4 @@
+#define ARDUINO_UNOR4_MINIMA 1
 #include <Arduino.h>
 
 #include "application.hpp"
@@ -30,12 +31,14 @@ sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 button_t startButtonObj = BUTTON_INIT(PIN_START_BUTTON);
 button_t * startButton = &startButtonObj;
 
-knob_t knobObj = KNOB_INIT(PIN_KNOB_A, PIN_KNOB_B, PIN_KNOB_C);
+knob_t knobObj = KNOB_INIT(PIN_KNOB_A, PIN_KNOB_B, PIN_KNOB_C, PIN_KNOB_D);
 knob_t * knob = &knobObj;
 
 dial_t customDistanceDialObj = DIAL_INIT(D14, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MIN, CUSTOM_KNOB_RESOLUTION);
 dial_t * customDistanceDial = &customDistanceDialObj;
 
+
+uint32_t debugCounter = 0;
 static inline uint32_t getCurrentRunDistance()
 {
 	return rewinder.jobSelections[rewinder.jobIndex].runs[rewinder.runIndex].distanceInFeet;
@@ -98,23 +101,27 @@ static void printStateTransition()
 	rewinder.previousState = rewinder.currentState;
 }
 
-
 void setup()
 {
 #if (ENABLE_DEBUG)
 	Serial.begin(115200);
 #endif
 	system__init();
+#if (ENABLE_DEBUG)
+	Serial.println("init complete.");
+#endif
 }
 
 void loop()
 {
+	debugCounter++;
 	uint32_t currentMillis = millis();
 
 //	Serial.println(abzEncoder__getValue(encoder));
 
 	//First update all processes
 	system__update();
+
 
 	systemState_t nextState = rewinder.currentState;
 
@@ -156,8 +163,6 @@ systemState_t setupState()
 
 	uint32_t selection = knob__getSelection(knob);
 
-
-
 	if (selection == KNOB_MAX_VALUE)
 	{
 		// custom mode enabled
@@ -177,7 +182,7 @@ systemState_t setupState()
 
 	sevenSegementDisplay__displayValue(sevenSegmentDisplay, jobLength);
 
-	if (button__getStatus(startButton))
+	if (button__getStatus(startButton) == true)
 	{
 		return SYSTEM_STATE_START;
 	}

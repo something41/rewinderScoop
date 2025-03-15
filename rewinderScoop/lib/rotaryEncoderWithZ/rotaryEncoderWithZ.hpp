@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "rotaryEncoder.hpp"
 
-
 typedef struct
 {
     rotaryEncoder_t abEncoder;

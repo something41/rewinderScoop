@@ -9,7 +9,7 @@ static void zISR(void * instance)
 void rotaryEncoderWithZ__init(rotaryEncoderWithZ_t * encoder)
 {
     pinMode(encoder->z.pin, INPUT);
-    attachInterruptArg(digitalPinToInterrupt(encoder->z.pin), zISR, encoder, RISING);
+    //attachInterruptArg(digitalPinToInterrupt(encoder->z.pin), zISR, encoder, RISING);
 }
 
 uint32_t rotaryEncoderWithZ__update(rotaryEncoderWithZ_t * encoder)

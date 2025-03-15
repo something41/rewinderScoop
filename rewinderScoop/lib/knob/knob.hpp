@@ -11,6 +11,7 @@ typedef struct
         const uint32_t a;
         const uint32_t b;
         const uint32_t c;
+        const uint32_t d;
     } pin;
 
     union
@@ -20,18 +21,20 @@ typedef struct
             uint32_t a : 1;
             uint32_t b : 1;
             uint32_t c : 1;
+            uint32_t d : 1;
         };
         uint32_t value;
     } reading;
 
 } knob_t;
 
-#define KNOB_INIT(_pinA, _pinB, _pinC) \
+#define KNOB_INIT(_pinA, _pinB, _pinC, _pinD) \
 { \
     .pin = { \
         .a = _pinA, \
         .b = _pinB, \
         .c = _pinC, \
+        .d = _pinD, \
     }, \
     .reading = { \
         .value = 0, \

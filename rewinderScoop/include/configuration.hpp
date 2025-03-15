@@ -57,16 +57,17 @@
 
 #define PIN_MOTOR      (D9)
 
-#define PIN_BUTTON_2   (D10)
+//#define PIN_BUTTON_2   (D10)
 
 #define PIN_KNOB_A     (D11)
 #define PIN_KNOB_B     (D12)
 #define PIN_KNOB_C     (D13)
+#define PIN_KNOB_D     (D15)
 
 #define PIN_DIAL       (D14)
 
-// currently unsed D15 -> 17
-#define PIN_D15        (D15)
+// currently unsed D16 -> 17
+
 #define PIN_D16        (D16)
 #define PIN_D17        (D17)
 
