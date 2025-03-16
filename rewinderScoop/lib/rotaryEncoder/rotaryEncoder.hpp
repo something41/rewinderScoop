@@ -1,7 +1,6 @@
 #include "stdint.h"
-//#define ENCODER_OPTIMIZE_INTERRUPTS
 #include "debounce.hpp"
-
+#include "Encoder.h"
 #define ENCODER_BYPASS_ERROR_DEBOUNCE (0)
 
 typedef enum
@@ -12,7 +11,7 @@ typedef enum
 
 typedef struct
 {
-    const double scaleFactor;
+    const float scaleFactor;
     Encoder encoder;
     debounce_t debounceError;
     rotaryEncoderMode_t mode;
@@ -34,7 +33,7 @@ typedef struct
 
 #define ROTARY_ENCODER_INIT(_pinA, _pinB, _scaleFactor, _debounce) ROTARY_ENCODER_INIT_FULL(_pinA, _pinB, _scaleFactor, _debounce)
 
-double rotaryEncoder__getScaledValue(rotaryEncoder_t * encoder);
+float rotaryEncoder__getScaledValue(rotaryEncoder_t * encoder);
 
 void rotaryEncoder__setScaledValue(rotaryEncoder_t * encoder, double value);
 

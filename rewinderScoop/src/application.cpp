@@ -1,4 +1,3 @@
-#define ARDUINO_UNOR4_MINIMA 1
 #include <Arduino.h>
 
 #include "application.hpp"
@@ -10,9 +9,10 @@
 #include "button.hpp"
 #include "knob.hpp"
 #include "dial.hpp"
+#include "zCounter.hpp"
 
 //#include "rotaryEncoderWithZ.hpp"
-//#include "rotaryEncoder.hpp"
+#include "rotaryEncoder.hpp"
 
 system_t rewinder = SYSTEM_INIT();
 
@@ -21,6 +21,9 @@ motor_t * motor = &motorObj;
 
 //rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, ENCODER_SCALE_VALUE_INCHES_PER_TICK, ENCODER_ERROR_DEBOUNCE_MS);
 //rotaryEncoder_t * encoder = &encoderObj;
+
+zCounter_t zCounterObj = ZCOUNTER_INIT(PIN_ENCODER_Z, ENCODER_Z_COUNT_SCALE, ENCODER_Z_TIME_OUT_MS);
+zCounter_t *zCounter = &zCounterObj;
 
 ledDisplay_t stopLightObj = LED_DISPLAY_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
 ledDisplay_t * stopLight = &stopLightObj;
@@ -81,8 +84,8 @@ static void printStateTransition()
 			case SYSTEM_STATE_START:
 				Serial.println("SYSTEM_STATE_START");
 				break;
-			case SYSTEM_STATE_TRANISITION_TO_RUN:
-				Serial.println("SYSTEM_STATE_TRANISITION_TO_RUN");
+			case SYSTEM_STATE_TRANSITION_TO_RUN:
+				Serial.println("SYSTEM_STATE_TRANSITION_TO_RUN");
 				break;
 			case SYSTEM_STATE_RUN:
 				Serial.println("SYSTEM_STATE_RUN");
@@ -110,18 +113,17 @@ void setup()
 #if (ENABLE_DEBUG)
 	Serial.println("init complete.");
 #endif
+	Serial.print("encoder scale: ");
 }
-
+double previous = 0;
 void loop()
 {
 	debugCounter++;
 	uint32_t currentMillis = millis();
 
 //	Serial.println(abzEncoder__getValue(encoder));
-
 	//First update all processes
 	system__update();
-
 
 	systemState_t nextState = rewinder.currentState;
 
@@ -133,7 +135,7 @@ void loop()
 		case SYSTEM_STATE_START:
 			nextState = startState();
 			break;
-		case SYSTEM_STATE_TRANISITION_TO_RUN:
+		case SYSTEM_STATE_TRANSITION_TO_RUN:
 			nextState = transitionToRunState();
 			break;
 		case SYSTEM_STATE_RUN:
@@ -191,12 +193,12 @@ systemState_t setupState()
 
 systemState_t startState()
 {
-	//rotaryEncoder__reset(encoder);
-	//rotaryEncoder__enterRunMode(encoder);
+	zCounter__reset(zCounter);
+	zCounter__enterRunMode(zCounter);
 
 	rewinder.runIndex = 0;
 
-	return SYSTEM_STATE_TRANISITION_TO_RUN;
+	return SYSTEM_STATE_TRANSITION_TO_RUN;
 }
 
 systemState_t transitionToRunState()
@@ -225,7 +227,7 @@ systemState_t runState()
 		return SYSTEM_STATE_ERROR;
 	}
 
-	uint32_t feetPulled = 0;//rotaryEncoder__getScaledValue(encoder);
+	uint32_t feetPulled = zCounter__getScaledCount(zCounter);
 
 	sevenSegementDisplay__displayValue(sevenSegmentDisplay, feetPulled);
 
@@ -234,7 +236,7 @@ systemState_t runState()
 		// Hooray! We finished a run
 		rewinder.runIndex++;
 
-		return rewinder.runIndex >= 2 ? SYSTEM_STATE_FINISH : SYSTEM_STATE_TRANISITION_TO_RUN;
+		return rewinder.runIndex >= 2 ? SYSTEM_STATE_FINISH : SYSTEM_STATE_TRANSITION_TO_RUN;
 	}
 
 	return SYSTEM_STATE_RUN;
@@ -245,7 +247,7 @@ systemState_t finishState()
 
 	motor__stop(motor);
 	ledDisplay__setStop(stopLight);
-	//rotaryEncoder__enterIdleMode(encoder);
+	zCounter__enterIdleMode(zCounter);
 
 	return SYSTEM_STATE_SETUP;
 }
@@ -264,7 +266,7 @@ void system__update()
 {
 	knob__update(knob); //should be updated before displays and buttons
 	motor__update(motor);
-	//rotaryEncoder__update(encoder);
+	zCounter__update(zCounter);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	ledDisplay__update(stopLight);
 	button__update(startButton);
@@ -279,7 +281,7 @@ void system__init()
 	motor__init(motor);
 	ledDisplay__init(stopLight);
 	button__init(startButton);
-	//rotaryEncoder__init(encoder);
+	zCounter__init(zCounter);
 	knob__init(knob);
 	dial__init(customDistanceDial);
 

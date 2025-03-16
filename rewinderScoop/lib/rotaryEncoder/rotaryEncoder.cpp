@@ -1,8 +1,8 @@
 #include "rotaryEncoder.hpp"
 
-double rotaryEncoder__getScaledValue(rotaryEncoder_t * encoder)
+float rotaryEncoder__getScaledValue(rotaryEncoder_t * encoder)
 {
-    return encoder->encoder.read() * encoder->scaleFactor;
+    return (encoder->encoder.read()) * encoder->scaleFactor;
 }
 
 void rotaryEncoder__setScaledValue(rotaryEncoder_t * encoder, double value)
@@ -20,6 +20,8 @@ void rotaryEncoder__reset(rotaryEncoder_t * encoder)
 
 void rotaryEncoder__update(rotaryEncoder_t * encoder)
 {
+    if(encoder->encoder.read())
+    Serial.println(encoder->encoder.read());
     if (encoder->mode == RUNNING)
     {
         encoder->currentCount = encoder->encoder.read();
@@ -54,7 +56,6 @@ boolean rotaryEncoder__stallErrorDetected(rotaryEncoder_t * encoder)
     {
         return false;
     }
-
 
     return debounce__getStatus(&encoder->debounceError);
 }

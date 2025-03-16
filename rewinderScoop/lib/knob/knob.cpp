@@ -19,11 +19,13 @@ int32_t knob__update(knob_t * knob)
 
     if (pValue != knob->reading.value)
     {
+        /*
         Serial.print("knob: ");
         Serial.print(knob->reading.a);
         Serial.print(knob->reading.b);
         Serial.print(knob->reading.c);
         Serial.println(knob->reading.d);
+        */
     }
     pValue = knob->reading.value;
 }

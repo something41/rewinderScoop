@@ -1,3 +1,4 @@
+#define ENCODER_OPTIMIZE_INTERRUPTS
 
 /*
 *   Job and speed configuration
@@ -33,8 +34,17 @@
 * Encoder parameters
 */
 #define ENCODER_ERROR_DEBOUNCE_MS            (1000)
-#define ENCODER_SCALE_VALUE_INCHES_PER_TICK  (.01)
+/*
+* Current encoder has a 300mm circumference. There are 200 pulses per revolution (PPR)
+*/
+#define ENCODER_CIRCUMFERENCE_MM ((float)300)
+#define UNIT_MM_PER_INCHES ((float)0.0393701)
+#define ENCODER_PULSES_PER_REVOLUTION ((float)200)
+//#define ENCODER_SCALE_VALUE_INCHES_PER_TICK  ((float)((ENCODER_PULSES_PER_REVOLUTION/ENCODER_CIRCUMFERENCE_MM)/4))
+#define ENCODER_SCALE_VALUE_INCHES_PER_TICK ((float) 1/1.5/2)
 
+#define ENCODER_Z_COUNT_SCALE ((float)1/300)
+#define ENCODER_Z_TIME_OUT_MS  (5000)
 
 /*
 *  Board configuration
@@ -45,14 +55,14 @@
 // TX                  (D0)
 // RX                  (D1)
 
-#define PIN_LED_RED    (D2)
-#define PIN_LED_YELLOW (D3)
+#define PIN_LED_RED    (D6)
+#define PIN_LED_YELLOW (D7)
 #define PIN_LED_GREEN  (D4)
 
 #define PIN_START_BUTTON (D5)
 
-#define PIN_ENCODER_A  (D6)
-#define PIN_ENCODER_B  (D7)
+#define PIN_ENCODER_A  (D2)
+#define PIN_ENCODER_B  (D3)
 #define PIN_ENCODER_Z  (D8)
 
 #define PIN_MOTOR      (D9)
