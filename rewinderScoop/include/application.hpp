@@ -13,6 +13,7 @@ typedef enum
 	SYSTEM_STATE_TRANSITION_TO_RUN,
 	SYSTEM_STATE_RUN,
 	SYSTEM_STATE_FINISH,
+    SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT,
 	SYSTEM_STATE_ERROR,
 } systemState_t;
 
@@ -83,5 +84,6 @@ systemState_t runState();
 systemState_t transitionToRunState();
 systemState_t finishState();
 systemState_t errorState();
+systemState_t waitForNoMovementState();
 
 void waitForNextMs(uint32_t currentMs);

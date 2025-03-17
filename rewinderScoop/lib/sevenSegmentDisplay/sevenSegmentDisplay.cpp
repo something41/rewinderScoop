@@ -16,7 +16,7 @@ void sevenSegmentDisplay__update(sevenSegmentDisplay_t * sevenSegmentDisplay)
 
 }
 
-void sevenSegementDisplay__displayValue(sevenSegmentDisplay_t * sevenSegmentDisplay, uint32_t value)
+void sevenSegmentDisplay__displayValue(sevenSegmentDisplay_t * sevenSegmentDisplay, uint32_t value)
 {
     sevenSegmentDisplay->displayDriver.displayInt(value);
 }

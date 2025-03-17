@@ -31,6 +31,6 @@ void sevenSegmentDisplay__init(sevenSegmentDisplay_t * sevenSegmentDisplay);
 
 void sevenSegmentDisplay__update(sevenSegmentDisplay_t * sevenSegmentDisplay);
 
-void sevenSegementDisplay__displayValue(sevenSegmentDisplay_t * sevenSegmentDisplay, uint32_t value);
+void sevenSegmentDisplay__displayValue(sevenSegmentDisplay_t * sevenSegmentDisplay, uint32_t value);
 
 void sevenSegmentDisplay__displayError(sevenSegmentDisplay_t * sevenSegmentDisplay);

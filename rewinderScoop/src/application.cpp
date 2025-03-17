@@ -11,7 +11,6 @@
 #include "dial.hpp"
 #include "zCounter.hpp"
 
-//#include "rotaryEncoderWithZ.hpp"
 #include "rotaryEncoder.hpp"
 
 system_t rewinder = SYSTEM_INIT();
@@ -19,11 +18,8 @@ system_t rewinder = SYSTEM_INIT();
 motor_t motorObj = MOTOR_INIT(PIN_MOTOR, MOTOR_RAMP_TIME_MS);
 motor_t * motor = &motorObj;
 
-//rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_B, ENCODER_SCALE_VALUE_INCHES_PER_TICK, ENCODER_ERROR_DEBOUNCE_MS);
-//rotaryEncoder_t * encoder = &encoderObj;
-
-zCounter_t zCounterObj = ZCOUNTER_INIT(PIN_ENCODER_Z, ENCODER_Z_COUNT_SCALE, ENCODER_Z_TIME_OUT_MS);
-zCounter_t *zCounter = &zCounterObj;
+rotaryEncoder_t encoderObj = ROTARY_ENCODER_INIT(PIN_ENCODER_A, PIN_ENCODER_Z, ENCODER_SCALE_MULTIPLIER, ENCODER_SCALE_DIVIDER, ENCODER_A_PULSES_PER_REVOLUTION, ENCODER_A_TIME_OUT_MS, ENCODER_FINISH_TIME_OUT_MS);
+rotaryEncoder_t * encoder = &encoderObj;
 
 ledDisplay_t stopLightObj = LED_DISPLAY_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
 ledDisplay_t * stopLight = &stopLightObj;
@@ -96,6 +92,9 @@ static void printStateTransition()
 			case SYSTEM_STATE_ERROR:
 				Serial.println("SYSTEM_STATE_ERROR");
 				break;
+			case SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT:
+				Serial.println("SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT");
+				break;
 			default:
 				break;
 		}
@@ -113,7 +112,6 @@ void setup()
 #if (ENABLE_DEBUG)
 	Serial.println("init complete.");
 #endif
-	Serial.print("encoder scale: ");
 }
 double previous = 0;
 void loop()
@@ -143,6 +141,9 @@ void loop()
 			break;
 		case SYSTEM_STATE_FINISH:
 			nextState = finishState();
+			break;
+		case SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT:
+			nextState = waitForNoMovementState();
 			break;
 		case SYSTEM_STATE_ERROR:
 			nextState = errorState();
@@ -176,13 +177,13 @@ systemState_t setupState()
 	{
 		rewinder.jobIndex = knob__getSelection(knob);
 	}
+	rewinder.jobIndex = 0;
 
 	uint32_t jobLength = getCurrentJobDistance();
 
-
 	ledDisplay__setStop(stopLight);
 
-	sevenSegementDisplay__displayValue(sevenSegmentDisplay, jobLength);
+	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, jobLength);
 
 	if (button__getStatus(startButton) == true)
 	{
@@ -193,8 +194,7 @@ systemState_t setupState()
 
 systemState_t startState()
 {
-	zCounter__reset(zCounter);
-	zCounter__enterRunMode(zCounter);
+	rotaryEncoder__reset(encoder);
 
 	rewinder.runIndex = 0;
 
@@ -227,9 +227,9 @@ systemState_t runState()
 		return SYSTEM_STATE_ERROR;
 	}
 
-	uint32_t feetPulled = zCounter__getScaledCount(zCounter);
+	uint32_t feetPulled = rotaryEncoder__getScaledValue(encoder);
 
-	sevenSegementDisplay__displayValue(sevenSegmentDisplay, feetPulled);
+	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, feetPulled);
 
 	if (feetPulled >= getCurrentRunDistance())
 	{
@@ -242,14 +242,23 @@ systemState_t runState()
 	return SYSTEM_STATE_RUN;
 }
 
+systemState_t waitForNoMovementState()
+{
+	uint32_t feetPulled = rotaryEncoder__getScaledValue(encoder);
+
+	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, feetPulled);
+
+	return rotaryEncoder__isFinished(encoder) ? SYSTEM_STATE_SETUP : SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
+
+}
+
 systemState_t finishState()
 {
-
 	motor__stop(motor);
 	ledDisplay__setStop(stopLight);
-	zCounter__enterIdleMode(zCounter);
+	rotaryEncoder__enterFinishMode(encoder);
 
-	return SYSTEM_STATE_SETUP;
+	return SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
 }
 
 systemState_t errorState()
@@ -266,13 +275,11 @@ void system__update()
 {
 	knob__update(knob); //should be updated before displays and buttons
 	motor__update(motor);
-	zCounter__update(zCounter);
+	rotaryEncoder__update(encoder);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	ledDisplay__update(stopLight);
 	button__update(startButton);
-	dial__update(customDistanceDial);
-
-
+	dial__update(customDistanceDial);						
 }
 
 void system__init()
@@ -281,9 +288,10 @@ void system__init()
 	motor__init(motor);
 	ledDisplay__init(stopLight);
 	button__init(startButton);
-	zCounter__init(zCounter);
 	knob__init(knob);
 	dial__init(customDistanceDial);
+	rotaryEncoder__init(encoder);
+	rotaryEncoder__enterRunMode(encoder);
 
 }
 

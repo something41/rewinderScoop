@@ -9,6 +9,7 @@ static void isr(void * var)
 void zCounter__init(zCounter_t * zCounter)
 {
     zCounter->counter = 0;
+    pinMode(zCounter->pin, INPUT_PULLUP);
     attachInterruptParam(zCounter->pin, isr, RISING, zCounter);
     debounce__init(&zCounter->debounceError);
 }
