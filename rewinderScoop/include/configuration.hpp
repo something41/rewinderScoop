@@ -8,8 +8,8 @@
 
 // The percent of a custom run that should be fast. 1-X is then slow.
 #define CUSTOM_PERCENT_FAST            (.75)
-#define CUSTOM_DISTANCE_MIN            (10)
-#define CUSTOM_DISTANCE_MIN            (999)
+#define CUSTOM_DISTANCE_MIN            (1)
+#define CUSTOM_DISTANCE_MAX            (500)
 #define CUSTOM_KNOB_RESOLUTION         (14) // reduce this to have less fine control of knob. Max val on this hw is 14b
 
 // replace CREATE_JOB with CREATE_JOB_FULL_INIT if you need to control speed.
@@ -50,37 +50,24 @@
 
 #define ENABLE_DEBUG (1)
 
-// TX                  (D0)
-// RX                  (D1)
-
-#define PIN_LED_RED    (D6)
-#define PIN_LED_YELLOW (D7)
-#define PIN_LED_GREEN  (D5)
-
-#define PIN_START_BUTTON (D4)
-
-#define PIN_ENCODER_A  (D2)
-//#define PIN_ENCODER_B  (D3)
-#define PIN_ENCODER_Z  (D3)
-
-#define PIN_MOTOR      (D9)
-
-//#define PIN_BUTTON_2   (D10)
-
-#define PIN_KNOB_A     (D11)
-#define PIN_KNOB_B     (D12)
-#define PIN_KNOB_C     (D13)
-#define PIN_KNOB_D     (D15)
-
-#define PIN_DIAL       (D14)
-
-// currently unsed D16 -> 17
-
-#define PIN_D16        (D16)
-#define PIN_D17        (D17)
-
-#define PIN_I2C_SCL    (D18)
-#define PIN_I2C_SCA    (D19)
+// TX                       (D0)
+// RX                       (D1)
+#define PIN_ENCODER_A       (D2)
+//#define PIN_ENCODER_B     (D3)
+#define PIN_ENCODER_Z       (D3)
+#define PIN_START_BUTTON    (D4)
+#define PIN_LED_GREEN       (D5)
+#define PIN_LED_RED         (D6)
+#define PIN_LED_YELLOW      (D7)
+#define PIN_GO_UNTIL_BUTTON (D8)
+#define PIN_MOTOR           (D9)
+//#define PIN_BUTTON_2      (D10)
+#define PIN_DIAL            (A1)
+#define PIN_KNOB            (A0)
+#define PIN_D16             (D16)
+#define PIN_D17             (D17)
+#define PIN_I2C_SCL         (D18)
+#define PIN_I2C_SCA         (D19)
 
 
 

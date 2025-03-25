@@ -24,16 +24,16 @@ rotaryEncoder_t * encoder = &encoderObj;
 ledDisplay_t stopLightObj = LED_DISPLAY_INIT(PIN_LED_RED, PIN_LED_YELLOW, PIN_LED_GREEN);
 ledDisplay_t * stopLight = &stopLightObj;
 
-sevenSegmentDisplay_t sevenSegmentDisplayObj = SEVEN_SEGMENT_DISPLAY_INIT(DEFAULT_I2C_ADDRESS);
+sevenSegmentDisplay_t sevenSegmentDisplayObj = SEVEN_SEGMENT_DISPLAY_INIT(DEFAULT_I2C_ADDRESS, 100);
 sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 
 button_t startButtonObj = BUTTON_INIT(PIN_START_BUTTON);
 button_t * startButton = &startButtonObj;
 
-knob_t knobObj = KNOB_INIT(PIN_KNOB_A, PIN_KNOB_B, PIN_KNOB_C, PIN_KNOB_D);
+knob_t knobObj = KNOB_INIT(PIN_KNOB);
 knob_t * knob = &knobObj;
 
-dial_t customDistanceDialObj = DIAL_INIT(D14, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MIN, CUSTOM_KNOB_RESOLUTION);
+dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX);
 dial_t * customDistanceDial = &customDistanceDialObj;
 
 
@@ -53,19 +53,10 @@ static inline uint32_t getCurrentJobDistance()
 	return rewinder.jobSelections[rewinder.jobIndex].runs[1].distanceInFeet;
 }
 
-static inline uint32_t getCustomDistance2(uint32_t value)
-{
-	return (1 - CUSTOM_PERCENT_FAST) * value;
-}
-static inline uint32_t getCustomDistance1(uint32_t value)
-{
-	return value - getCustomDistance2(value);
-}
-
 static void setCustomDistance(uint32_t value)
 {
-	rewinder.jobSelections[CUSTOM_JOB_INDEX].runs[0].distanceInFeet = getCustomDistance1(value);
-	rewinder.jobSelections[CUSTOM_JOB_INDEX].runs[1].distanceInFeet = getCustomDistance2(value);
+	rewinder.jobSelections[CUSTOM_JOB_INDEX].runs[0].distanceInFeet = CUSTOM_PERCENT_FAST * value;
+	rewinder.jobSelections[CUSTOM_JOB_INDEX].runs[1].distanceInFeet = value;
 }
 
 static void printStateTransition()
@@ -113,13 +104,11 @@ void setup()
 	Serial.println("init complete.");
 #endif
 }
-double previous = 0;
+
 void loop()
 {
-	debugCounter++;
 	uint32_t currentMillis = millis();
 
-//	Serial.println(abzEncoder__getValue(encoder));
 	//First update all processes
 	system__update();
 
@@ -166,7 +155,7 @@ systemState_t setupState()
 
 	uint32_t selection = knob__getSelection(knob);
 
-	if (selection == KNOB_MAX_VALUE)
+	if (selection == KNOB_NUM_VALUES)
 	{
 		// custom mode enabled
 		uint32_t customDistance  = dial__getReading(customDistanceDial);
@@ -177,7 +166,8 @@ systemState_t setupState()
 	{
 		rewinder.jobIndex = knob__getSelection(knob);
 	}
-	rewinder.jobIndex = 0;
+
+	//Serial.println(selection);
 
 	uint32_t jobLength = getCurrentJobDistance();
 
@@ -227,11 +217,11 @@ systemState_t runState()
 		return SYSTEM_STATE_ERROR;
 	}
 
-	uint32_t feetPulled = rotaryEncoder__getScaledValue(encoder);
+	uint32_t inchesPulled = rotaryEncoder__getScaledValue(encoder);
 
-	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, feetPulled);
+	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, inchesPulled);
 
-	if (feetPulled >= getCurrentRunDistance())
+	if (inchesPulled >= getCurrentRunDistance())
 	{
 		// Hooray! We finished a run
 		rewinder.runIndex++;
@@ -244,9 +234,9 @@ systemState_t runState()
 
 systemState_t waitForNoMovementState()
 {
-	uint32_t feetPulled = rotaryEncoder__getScaledValue(encoder);
+	uint32_t inchesPulled = rotaryEncoder__getScaledValue(encoder);
 
-	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, feetPulled);
+	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, inchesPulled);
 
 	return rotaryEncoder__isFinished(encoder) ? SYSTEM_STATE_SETUP : SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
 
@@ -256,6 +246,7 @@ systemState_t finishState()
 {
 	motor__stop(motor);
 	ledDisplay__setStop(stopLight);
+
 	rotaryEncoder__enterFinishMode(encoder);
 
 	return SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
@@ -284,6 +275,8 @@ void system__update()
 
 void system__init()
 {
+	//analogReadResolution(14);
+
 	sevenSegmentDisplay__init(sevenSegmentDisplay);
 	motor__init(motor);
 	ledDisplay__init(stopLight);

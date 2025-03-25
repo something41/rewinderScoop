@@ -15,15 +15,18 @@ typedef struct {
     displayMode_t mode;
     uint32_t currentValue;
     uint32_t endPoint;
-    
+    uint32_t refreshRateMs;
+    uint32_t counter;
 } sevenSegmentDisplay_t;
 
-#define SEVEN_SEGMENT_DISPLAY_INIT(_address) \
+#define SEVEN_SEGMENT_DISPLAY_INIT(_address, _refreshRateMs) \
 { \
     .displayDriver = {_address}, \
     .mode = BLANK, \
     .currentValue = 0, \
     .endPoint = 0, \
+    .refreshRateMs = _refreshRateMs, \
+    .counter = 0, \
 }
 
 

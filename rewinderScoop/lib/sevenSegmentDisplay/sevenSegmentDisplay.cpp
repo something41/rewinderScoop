@@ -13,12 +13,16 @@ void sevenSegmentDisplay__init(sevenSegmentDisplay_t * sevenSegmentDisplay)
 
 void sevenSegmentDisplay__update(sevenSegmentDisplay_t * sevenSegmentDisplay)
 {
-
+    sevenSegmentDisplay->counter++;
 }
 
 void sevenSegmentDisplay__displayValue(sevenSegmentDisplay_t * sevenSegmentDisplay, uint32_t value)
 {
-    sevenSegmentDisplay->displayDriver.displayInt(value);
+    if (sevenSegmentDisplay->counter > sevenSegmentDisplay->refreshRateMs)
+    {
+        sevenSegmentDisplay->displayDriver.displayInt(value);
+        sevenSegmentDisplay->counter = 0;
+    }
 }
 
 void sevenSegmentDisplay__displayError(sevenSegmentDisplay_t * sevenSegmentDisplay)
