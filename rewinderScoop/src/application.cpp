@@ -30,12 +30,18 @@ sevenSegmentDisplay_t * sevenSegmentDisplay = &sevenSegmentDisplayObj;
 button_t startButtonObj = BUTTON_INIT(PIN_START_BUTTON);
 button_t * startButton = &startButtonObj;
 
+button_t holdDownButtonObj = BUTTON_INIT(PIN_HOLD_BUTTON);
+button_t * holdDownButton = &holdDownButtonObj;
+
 knob_t knobObj = KNOB_INIT(PIN_KNOB);
 knob_t * knob = &knobObj;
 
-dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX);
+dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX, 0.01, 432, 16200);
 dial_t * customDistanceDial = &customDistanceDialObj;
 
+//todo set proper values
+dial_t speedDialObj = DIAL_INIT(PIN_SPEED_DIAL, 0, 255, 0.01, 432, 16200);
+dial_t * speedDial = &speedDialObj;
 
 uint32_t debugCounter = 0;
 static inline uint32_t getCurrentRunDistance()
@@ -86,6 +92,9 @@ static void printStateTransition()
 			case SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT:
 				Serial.println("SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT");
 				break;
+			case SYSTEM_RUN_UNTIL_RELEASE_STATE:
+				Serial.println("SYSTEM_RUN_UNTIL_RELEASE_STATE");
+				break;
 			default:
 				break;
 		}
@@ -134,6 +143,9 @@ void loop()
 		case SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT:
 			nextState = waitForNoMovementState();
 			break;
+		case SYSTEM_RUN_UNTIL_RELEASE_STATE:
+			nextState = customRunState();
+			break;
 		case SYSTEM_STATE_ERROR:
 			nextState = errorState();
 			break;
@@ -179,6 +191,12 @@ systemState_t setupState()
 	{
 		return SYSTEM_STATE_START;
 	}
+
+	if (button__getStatus(holdDownButton) == true)
+	{
+		return SYSTEM_RUN_UNTIL_RELEASE_STATE;
+	}
+
 	return SYSTEM_STATE_SETUP;
 }
 
@@ -262,6 +280,29 @@ systemState_t errorState()
 	return SYSTEM_STATE_ERROR;
 }
 
+systemState_t customRunState()
+{
+
+	// todo do we want to add error condition checking here
+	ledDisplay__setFast(stopLight);
+
+	uint32_t inchesPulled = rotaryEncoder__getScaledValue(encoder);
+
+	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, inchesPulled);
+
+	uint32_t motorSpeed = dial__getReading(speedDial);
+
+	motor__setSpeed(motor, motorSpeed);
+
+	if (button__getStatus(holdDownButton) == false)
+	{
+		return SYSTEM_STATE_FINISH;
+	}
+
+
+	return SYSTEM_RUN_UNTIL_RELEASE_STATE;
+}
+
 void system__update()
 {
 	knob__update(knob); //should be updated before displays and buttons
@@ -270,7 +311,9 @@ void system__update()
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
 	ledDisplay__update(stopLight);
 	button__update(startButton);
-	dial__update(customDistanceDial);						
+	button__update(holdDownButton);
+	dial__update(customDistanceDial);		
+	dial__update(speedDial);				
 }
 
 void system__init()
@@ -281,8 +324,10 @@ void system__init()
 	motor__init(motor);
 	ledDisplay__init(stopLight);
 	button__init(startButton);
+	button__init(holdDownButton);
 	knob__init(knob);
 	dial__init(customDistanceDial);
+	dial__init(speedDial);
 	rotaryEncoder__init(encoder);
 	rotaryEncoder__enterRunMode(encoder);
 
