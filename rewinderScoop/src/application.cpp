@@ -36,7 +36,7 @@ button_t * holdDownButton = &holdDownButtonObj;
 knob_t knobObj = KNOB_INIT(PIN_KNOB);
 knob_t * knob = &knobObj;
 
-dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX, 0.01, 432, 16200);
+dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX, 0.01, 0, 16200);
 dial_t * customDistanceDial = &customDistanceDialObj;
 
 //todo set proper values
@@ -182,6 +182,7 @@ systemState_t setupState()
 	//Serial.println(selection);
 
 	uint32_t jobLength = getCurrentJobDistance();
+	Serial.println(selection);
 
 	ledDisplay__setStop(stopLight);
 
@@ -194,7 +195,7 @@ systemState_t setupState()
 
 	if (button__getStatus(holdDownButton) == true)
 	{
-		return SYSTEM_RUN_UNTIL_RELEASE_STATE;
+	//	return SYSTEM_RUN_UNTIL_RELEASE_STATE;
 	}
 
 	return SYSTEM_STATE_SETUP;
@@ -257,7 +258,6 @@ systemState_t waitForNoMovementState()
 	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, inchesPulled);
 
 	return rotaryEncoder__isFinished(encoder) ? SYSTEM_STATE_SETUP : SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
-
 }
 
 systemState_t finishState()
@@ -299,13 +299,12 @@ systemState_t customRunState()
 		return SYSTEM_STATE_FINISH;
 	}
 
-
 	return SYSTEM_RUN_UNTIL_RELEASE_STATE;
 }
 
 void system__update()
 {
-	knob__update(knob); //should be updated before displays and buttons
+	knob__update(knob);
 	motor__update(motor);
 	rotaryEncoder__update(encoder);
 	sevenSegmentDisplay__update(sevenSegmentDisplay);
@@ -318,8 +317,6 @@ void system__update()
 
 void system__init()
 {
-	//analogReadResolution(14);
-
 	sevenSegmentDisplay__init(sevenSegmentDisplay);
 	motor__init(motor);
 	ledDisplay__init(stopLight);
@@ -330,7 +327,6 @@ void system__init()
 	dial__init(speedDial);
 	rotaryEncoder__init(encoder);
 	rotaryEncoder__enterRunMode(encoder);
-
 }
 
 void waitForNextMs(uint32_t currentMs)

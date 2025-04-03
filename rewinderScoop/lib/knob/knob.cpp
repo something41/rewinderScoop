@@ -1,10 +1,14 @@
 #include "knob.hpp"
 #include <Arduino.h>
-
-#define KNOB_TRANSITION_READING (60)
+#include "debounce.hpp"
 
 static uint32_t getSelectionFromReading(knob_t * knob)
 {
+    if (knob->rawReading < MIN_THRESHOLD)
+    {
+        return KNOB_NUM_VALUES;
+    }
+
     for (uint32_t i = 0; i < KNOB_NUM_VALUES; i++)
     {
         if (knob->rawReading < knob->thresholds[i])
@@ -19,31 +23,27 @@ void knob__init(knob_t * knob)
 {
     knob->rawReading = analogRead(knob->pin);
     knob->selection = getSelectionFromReading(knob);
+    debounce__init(&knob->debouncer);
 
 
 }
-uint32_t t = 0;
+
 uint32_t knob__update(knob_t * knob)
 {
     knob->rawReading = analogRead(knob->pin);
-    // if (t == 2000){
-    //     Serial.println(knob->rawReading);
-    //     t = 0;
-    // }
-    // t++;
- // Serial.println(knob->rawReading);
-    if (knob->rawReading > KNOB_TRANSITION_READING)
-    {
-        knob->selection = getSelectionFromReading(knob);
 
+    uint32_t tempSelection = getSelectionFromReading(knob);
+    
+    if (debounce__update(&knob->debouncer, tempSelection))
+    {
+        knob->selection = debounce__getStatus(&knob->debouncer);
         if (knob->selection != knob->previousSelection)
         {
             knob->previousSelection = knob->selection;
-            Serial.println(knob->selection);
+        //    Serial.println(knob->selection);
         //    Serial.print("  :  ");
         //    Serial.println(knob->rawReading);
         }
-
     }
 
     return knob->selection;
