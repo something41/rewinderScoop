@@ -40,7 +40,7 @@ dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_D
 dial_t * customDistanceDial = &customDistanceDialObj;
 
 //todo set proper values
-dial_t speedDialObj = DIAL_INIT(PIN_SPEED_DIAL, 0, 255, 0.01, 432, 16200);
+dial_t speedDialObj = DIAL_INIT(PIN_SPEED_DIAL, 0, 255, 0.01, 20, 1000);
 dial_t * speedDial = &speedDialObj;
 
 uint32_t debugCounter = 0;
@@ -179,10 +179,7 @@ systemState_t setupState()
 		rewinder.jobIndex = knob__getSelection(knob);
 	}
 
-	//Serial.println(selection);
-
 	uint32_t jobLength = getCurrentJobDistance();
-	Serial.println(selection);
 
 	ledDisplay__setStop(stopLight);
 
@@ -195,7 +192,7 @@ systemState_t setupState()
 
 	if (button__getStatus(holdDownButton) == true)
 	{
-	//	return SYSTEM_RUN_UNTIL_RELEASE_STATE;
+		return SYSTEM_RUN_UNTIL_RELEASE_STATE;
 	}
 
 	return SYSTEM_STATE_SETUP;
@@ -292,7 +289,7 @@ systemState_t customRunState()
 
 	uint32_t motorSpeed = dial__getReading(speedDial);
 
-	motor__setSpeed(motor, motorSpeed);
+	motor__setSpeedInstantly(motor, motorSpeed);
 
 	if (button__getStatus(holdDownButton) == false)
 	{
@@ -312,7 +309,7 @@ void system__update()
 	button__update(startButton);
 	button__update(holdDownButton);
 	dial__update(customDistanceDial);		
-	dial__update(speedDial);				
+	dial__update(speedDial);	
 }
 
 void system__init()

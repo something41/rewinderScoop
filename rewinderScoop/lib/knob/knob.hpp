@@ -19,7 +19,7 @@
 #define THRESHOLD_9   (820)
 #define THRESHOLD_10  (900)
 
-#define KNOB_DEBOUNCE_TIME_MS (250)
+#define KNOB_DEBOUNCE_TIME_MS (100)
 
 typedef struct
 {
