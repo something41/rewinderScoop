@@ -40,9 +40,6 @@ uint32_t knob__update(knob_t * knob)
         if (knob->selection != knob->previousSelection)
         {
             knob->previousSelection = knob->selection;
-        //    Serial.println(knob->selection);
-        //    Serial.print("  :  ");
-        //    Serial.println(knob->rawReading);
         }
     }
 

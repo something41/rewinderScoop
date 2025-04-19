@@ -16,6 +16,7 @@ typedef enum
     SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT,
     SYSTEM_RUN_UNTIL_RELEASE_STATE,
 	SYSTEM_STATE_ERROR,
+    SYSTEM_STATE_CLEAN_UP,
 } systemState_t;
 
 
@@ -36,6 +37,7 @@ typedef struct
 {
 	systemState_t currentState;
     systemState_t previousState;
+    uint32_t timer;
 	job_t jobSelections[11];
 	uint32_t runIndex;
     uint32_t jobIndex;
@@ -58,6 +60,7 @@ typedef struct
 #define SYSTEM_INIT() { \
     .currentState = SYSTEM_STATE_SETUP, \
     .previousState = SYSTEM_STATE_SETUP, \
+    .timer = 0, \
     .jobSelections = { \
             JOB_0, \
             JOB_1, \
@@ -71,7 +74,7 @@ typedef struct
             JOB_9, \
             JOB_10, \
         }, \
-} \
+}
 
 #define CUSTOM_JOB_INDEX (10)
 
@@ -87,5 +90,6 @@ systemState_t finishState();
 systemState_t errorState();
 systemState_t waitForNoMovementState();
 systemState_t customRunState();
+systemState_t cleanUpState();
 
 void waitForNextMs(uint32_t currentMs);

@@ -20,11 +20,11 @@
 #define JOB_3  CREATE_JOB(280, 20)
 #define JOB_4  CREATE_JOB(340, 20)
 // currently unneeded jobs that can be added later
-#define JOB_5  CREATE_JOB(150, 15)
-#define JOB_6  CREATE_JOB(160, 16)
-#define JOB_7  CREATE_JOB(170, 17)
-#define JOB_8  CREATE_JOB(180, 18)
-#define JOB_9  CREATE_JOB(190, 19)
+#define JOB_5  CREATE_JOB(0, 1)
+#define JOB_6  CREATE_JOB(0, 1)
+#define JOB_7  CREATE_JOB(0, 1)
+#define JOB_8  CREATE_JOB(0, 1)
+#define JOB_9  CREATE_JOB(0, 1)
 
 // Job 10 is the custom job
 #define JOB_10 CREATE_JOB(200, 20)
@@ -52,24 +52,27 @@
 
 // TX                       (D0)
 // RX                       (D1)
-#define PIN_ENCODER_A       (D2)
-#define PIN_ENCODER_Z       (D3)
-#define PIN_START_BUTTON    (D4)
-#define PIN_LED_GREEN       (D5)
-#define PIN_LED_RED         (D6)
-#define PIN_LED_YELLOW      (D7)
-#define PIN_GO_UNTIL_BUTTON (D8)
-#define PIN_MOTOR           (D9)
-#define PIN_HOLD_BUTTON     (D10)
-#define PIN_DIAL            (A1)
+#define PIN_LED_GREEN       (D2)
+#define PIN_LED_YELLOW      (D3)
+#define PIN_LED_RED         (D4)
+#define PIN_START_BUTTON    (D5)
+#define PIN_HOLD_BUTTON     (D6)
+#define UNUSED_0            (D7)
+#define UNUSED_1            (D8)
+#define UNUSED_2            (D9)
+#define UNUSED_3            (D10)
+#define PIN_MOTOR           (D11)
+#define PIN_ENCODER_Z       (D12)
+#define PIN_ENCODER_A       (D13)
+
 #define PIN_KNOB            (A0)
-#define PIN_SPEED_DIAL      (A2)
+#define PIN_DIAL            (A2)
+#define PIN_SPEED_DIAL      (A1)
+
 #define PIN_D16             (D16)
 #define PIN_D17             (D17)
 #define PIN_I2C_SCL         (D18)
 #define PIN_I2C_SCA         (D19)
-
-
 
 
 

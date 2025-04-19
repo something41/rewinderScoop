@@ -36,11 +36,11 @@ button_t * holdDownButton = &holdDownButtonObj;
 knob_t knobObj = KNOB_INIT(PIN_KNOB);
 knob_t * knob = &knobObj;
 
-dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX, 0.01, 0, 16200);
+dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX, 0.01, 1024, 0);
 dial_t * customDistanceDial = &customDistanceDialObj;
 
 //todo set proper values
-dial_t speedDialObj = DIAL_INIT(PIN_SPEED_DIAL, 0, 255, 0.01, 20, 1000);
+dial_t speedDialObj = DIAL_INIT(PIN_SPEED_DIAL, 0, 255, 0.01, 1024, 920);
 dial_t * speedDial = &speedDialObj;
 
 uint32_t debugCounter = 0;
@@ -94,6 +94,9 @@ static void printStateTransition()
 				break;
 			case SYSTEM_RUN_UNTIL_RELEASE_STATE:
 				Serial.println("SYSTEM_RUN_UNTIL_RELEASE_STATE");
+				break;
+			case SYSTEM_STATE_CLEAN_UP:
+				Serial.println("SYSTEM_STATE_CLEAN_UP");
 				break;
 			default:
 				break;
@@ -149,6 +152,9 @@ void loop()
 		case SYSTEM_STATE_ERROR:
 			nextState = errorState();
 			break;
+		case SYSTEM_STATE_CLEAN_UP:
+			nextState = cleanUpState();
+			break;
 		default:
 			break;
 	}
@@ -164,7 +170,6 @@ void loop()
 
 systemState_t setupState()
 {
-
 	uint32_t selection = knob__getSelection(knob);
 
 	if (selection == KNOB_NUM_VALUES)
@@ -210,6 +215,7 @@ systemState_t startState()
 systemState_t transitionToRunState()
 {
 	motor__setSpeed(motor, getCurrentRunSpeed());
+	rotaryEncoder__enterRunMode(encoder);
 
 	if (rewinder.runIndex == 0)
 	{
@@ -226,7 +232,7 @@ systemState_t transitionToRunState()
 
 systemState_t runState()
 {
-	bool errorDetected = 0; //rotaryEncoder__stallErrorDetected(encoder);
+	bool errorDetected = rotaryEncoder__stallErrorDetected(encoder);
 
 	if (errorDetected)
 	{
@@ -248,21 +254,37 @@ systemState_t runState()
 	return SYSTEM_STATE_RUN;
 }
 
+systemState_t cleanUpState()
+{
+	// this is just to flash leds more
+	return ledDisplay__isDone(stopLight) ? SYSTEM_STATE_SETUP : SYSTEM_STATE_CLEAN_UP;
+}
+
 systemState_t waitForNoMovementState()
 {
 	uint32_t inchesPulled = rotaryEncoder__getScaledValue(encoder);
 
 	sevenSegmentDisplay__displayValue(sevenSegmentDisplay, inchesPulled);
 
-	return rotaryEncoder__isFinished(encoder) ? SYSTEM_STATE_SETUP : SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
+	bool isDone = rotaryEncoder__isFinished(encoder);
+
+	if (isDone)
+	{
+		ledDisplay__setFinish(stopLight);
+	}
+
+	return isDone ? SYSTEM_STATE_CLEAN_UP : SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
 }
 
 systemState_t finishState()
 {
 	motor__stop(motor);
+
 	ledDisplay__setStop(stopLight);
 
 	rotaryEncoder__enterFinishMode(encoder);
+
+	rewinder.timer = 0;
 
 	return SYSTEM_STATE_WAIT_UNTIL_NO_MOVEMENT;
 }
@@ -309,7 +331,7 @@ void system__update()
 	button__update(startButton);
 	button__update(holdDownButton);
 	dial__update(customDistanceDial);		
-	dial__update(speedDial);	
+	dial__update(speedDial);
 }
 
 void system__init()
@@ -323,7 +345,6 @@ void system__init()
 	dial__init(customDistanceDial);
 	dial__init(speedDial);
 	rotaryEncoder__init(encoder);
-	rotaryEncoder__enterRunMode(encoder);
 }
 
 void waitForNextMs(uint32_t currentMs)

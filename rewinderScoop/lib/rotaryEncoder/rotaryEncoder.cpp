@@ -44,6 +44,7 @@ void rotaryEncoder__reset(rotaryEncoder_t * encoder)
     encoder->accurateCount = 0;
     encoder->calibrationComplete = false;
     debounce__init(&encoder->debounceError);
+    debounce__init(&encoder->debounceFinish);
 }
 
 void rotaryEncoder__update(rotaryEncoder_t * encoder)

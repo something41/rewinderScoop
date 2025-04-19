@@ -1,8 +1,6 @@
 #include "ledDisplay.hpp"
 #include "Arduino.h"
 
-#define LED_ERROR_DISPLAY_TIME_MS (100)
-
 static void clear(ledDisplay_t * ledDisplay)
 {
     digitalWrite(ledDisplay->redPin, LED_OFF);
@@ -34,65 +32,107 @@ static void setGreen(ledDisplay_t * ledDisplay)
 static void processError(ledDisplay_t * ledDisplay)
 {
     
-    ledDisplay->error.counterMs += 1;
+    ledDisplay->counterMs += 1;
 
-    if (ledDisplay->error.counterMs == LED_ERROR_DISPLAY_TIME_MS)
+    if (ledDisplay->counterMs == LED_ERROR_DISPLAY_TIME_MS)
     {
         setYellow(ledDisplay);
 
     }
-    else if (ledDisplay->error.counterMs == 2 * LED_ERROR_DISPLAY_TIME_MS)
+    else if (ledDisplay->counterMs == 2 * LED_ERROR_DISPLAY_TIME_MS)
     {
         setGreen(ledDisplay);
 
     }
-    else if (ledDisplay->error.counterMs == 3 * LED_ERROR_DISPLAY_TIME_MS)
+    else if (ledDisplay->counterMs == 3 * LED_ERROR_DISPLAY_TIME_MS)
     {
-        ledDisplay->error.counterMs = 0;
+        ledDisplay->counterMs = 0;
         setRed(ledDisplay);
+    }
+}
+
+static void processFinish(ledDisplay_t * ledDisplay)
+{
+    ledDisplay->counterMs += 1;
+
+    if (ledDisplay->counterMs == LED_ERROR_DISPLAY_TIME_MS)
+    {
+        clear(ledDisplay);
+    }
+    else if (ledDisplay->counterMs == 2 * LED_ERROR_DISPLAY_TIME_MS)
+    {
+        setRed(ledDisplay);
+    }
+    else if (ledDisplay->counterMs == 3 * LED_ERROR_DISPLAY_TIME_MS)
+    {
+        clear(ledDisplay);
+    }
+    else if (ledDisplay->counterMs == 4 * LED_ERROR_DISPLAY_TIME_MS)
+    {
+        setRed(ledDisplay);
+    }
+    else if (ledDisplay->counterMs > 4 * LED_ERROR_DISPLAY_TIME_MS)
+    {
+        ledDisplay->counterMs = 0;
+        ledDisplay->isDone = true;
     }
     
 }
 void ledDisplay__setClear(ledDisplay_t * ledDisplay)
 {
-    ledDisplay->displayType = CLEAR;
+    ledDisplay->displayType = DISPLAY_TYPE__CLEAR;
 }
 
 void ledDisplay__setStop(ledDisplay_t * ledDisplay)
 {
-    ledDisplay->displayType = STOP;
+    ledDisplay->displayType = DISPLAY_TYPE__STOP;
 }
 void ledDisplay__setSlow(ledDisplay_t * ledDisplay)
 {
-    ledDisplay->displayType = SLOW;
+    ledDisplay->displayType = DISPLAY_TYPE__SLOW;
 }
 void ledDisplay__setFast(ledDisplay_t * ledDisplay)
 {
-    ledDisplay->displayType = FAST;
+    ledDisplay->displayType = DISPLAY_TYPE__FAST;
 }
 
 void ledDisplay__setError(ledDisplay_t * ledDisplay)
 {
-    ledDisplay->displayType = ERROR;
+    ledDisplay->displayType = DISPLAY_TYPE__ERROR;
+}
+
+void ledDisplay__setFinish(ledDisplay_t * ledDisplay)
+{
+    ledDisplay->counterMs = 0;
+    ledDisplay->isDone = false;
+    ledDisplay->displayType = DISPLAY_TYPE__FINISH;
+}
+
+bool ledDisplay__isDone(ledDisplay_t * ledDisplay)
+{
+    return ledDisplay->isDone;
 }
 
 void ledDisplay__update(ledDisplay_t * ledDisplay)
 {
     switch(ledDisplay->displayType)
     {
-        case CLEAR:
+        case DISPLAY_TYPE__CLEAR:
             clear(ledDisplay);
             break;
-        case STOP:
+        case DISPLAY_TYPE__STOP:
             setRed(ledDisplay);
             break;
-        case SLOW:
+        case DISPLAY_TYPE__SLOW:
             setYellow(ledDisplay);
             break;
-        case FAST:
+        case DISPLAY_TYPE__FAST:
             setGreen(ledDisplay);
             break;
-        case ERROR:
+        case DISPLAY_TYPE__FINISH:
+            processFinish(ledDisplay);
+            break;
+        case DISPLAY_TYPE__ERROR:
             processError(ledDisplay);
             break;
         default:
