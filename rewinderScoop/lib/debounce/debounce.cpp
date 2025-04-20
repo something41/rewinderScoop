@@ -11,7 +11,6 @@ bool debounce__update(debounce_t * debounce, uint32_t sampledValue)
                 debounce->status = sampledValue;
                 return true;
             }
-
         }
     }
     else {
@@ -19,8 +18,7 @@ bool debounce__update(debounce_t * debounce, uint32_t sampledValue)
         debounce->previousSample = sampledValue;
 
     }
-
-
+    
     return false;
 }
 

@@ -4,7 +4,6 @@
 #define MOTOR_MAX_PWM (255)
 #define MOTOR_SLEW_RATE (10)
 
-
 typedef uint32_t motorPercentage;
 typedef uint32_t motorPwmFrequency;
 
@@ -16,7 +15,6 @@ typedef struct
     uint32_t counterMs;
     const uint32_t slewRate;
 } motor_t;
-
 
 #define MOTOR_INIT(_PIN, _SLEW_RATE) \
 { \

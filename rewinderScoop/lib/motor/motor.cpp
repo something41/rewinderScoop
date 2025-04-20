@@ -31,7 +31,6 @@ static motorPercentage calculatePercentFromFrequency(motorPwmFrequency freq)
 
 static uint32_t calculateSlewRate(motor_t * motor, uint32_t desiredSpeed)
 {
-
     if (desiredSpeed == motor->currentSpeed)
     {
         return desiredSpeed;
@@ -89,10 +88,8 @@ void motor__stop(motor_t * motor)
 
 void motor__update(motor_t * motor)
 {
-    
     motor->currentSpeed = calculateSlewRate(motor, motor->requestedSpeed);
     uint32_t frequency = calculateFrequencyFromPercent(motor->currentSpeed);
 
     analogWrite(motor->pin, frequency);
-
 }

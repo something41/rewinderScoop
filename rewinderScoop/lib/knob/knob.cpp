@@ -24,8 +24,6 @@ void knob__init(knob_t * knob)
     knob->rawReading = analogRead(knob->pin);
     knob->selection = getSelectionFromReading(knob);
     debounce__init(&knob->debouncer);
-
-
 }
 
 uint32_t knob__update(knob_t * knob)

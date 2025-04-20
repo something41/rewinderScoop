@@ -39,11 +39,9 @@ knob_t * knob = &knobObj;
 dial_t customDistanceDialObj = DIAL_INIT(PIN_DIAL, CUSTOM_DISTANCE_MIN, CUSTOM_DISTANCE_MAX, 0.01, 1024, 0);
 dial_t * customDistanceDial = &customDistanceDialObj;
 
-//todo set proper values
 dial_t speedDialObj = DIAL_INIT(PIN_SPEED_DIAL, 0, 255, 0.01, 1024, 920);
 dial_t * speedDial = &speedDialObj;
 
-uint32_t debugCounter = 0;
 static inline uint32_t getCurrentRunDistance()
 {
 	return rewinder.jobSelections[rewinder.jobIndex].runs[rewinder.runIndex].distanceInFeet;
@@ -291,7 +289,7 @@ systemState_t finishState()
 
 systemState_t errorState()
 {
-	// something went wrong display error
+	// something went wrong. display error
 	// stay in here forever until device gets rebooted
 	motor__stop(motor);
 	sevenSegmentDisplay__displayError(sevenSegmentDisplay);
@@ -301,8 +299,6 @@ systemState_t errorState()
 
 systemState_t customRunState()
 {
-
-	// todo do we want to add error condition checking here
 	ledDisplay__setFast(stopLight);
 
 	uint32_t inchesPulled = rotaryEncoder__getScaledValue(encoder);

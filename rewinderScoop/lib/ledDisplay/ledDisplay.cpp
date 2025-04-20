@@ -31,18 +31,15 @@ static void setGreen(ledDisplay_t * ledDisplay)
 
 static void processError(ledDisplay_t * ledDisplay)
 {
-    
     ledDisplay->counterMs += 1;
 
     if (ledDisplay->counterMs == LED_ERROR_DISPLAY_TIME_MS)
     {
         setYellow(ledDisplay);
-
     }
     else if (ledDisplay->counterMs == 2 * LED_ERROR_DISPLAY_TIME_MS)
     {
         setGreen(ledDisplay);
-
     }
     else if (ledDisplay->counterMs == 3 * LED_ERROR_DISPLAY_TIME_MS)
     {

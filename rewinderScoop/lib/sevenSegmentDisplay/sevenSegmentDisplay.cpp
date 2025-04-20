@@ -1,6 +1,5 @@
 #include "sevenSegmentDisplay.hpp"
 
-
 void sevenSegmentDisplay__init(sevenSegmentDisplay_t * sevenSegmentDisplay)
 {
     Wire.begin();

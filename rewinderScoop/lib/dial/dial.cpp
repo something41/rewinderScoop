@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "dial.hpp"
 
-
 #define MAX_DISPLAY_NUM (9999)
 #define MAX_RAW_VALUE (16200)
 

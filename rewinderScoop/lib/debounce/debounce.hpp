@@ -5,7 +5,6 @@
 #define DEBOUNCE_H_
 
 #define DEFAULT_DEBOUNCE_TIME_MS (10)
-
 #define DEBOUNCE_DISABLED_TIME_MS (0)
 
 typedef struct

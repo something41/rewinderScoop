@@ -41,13 +41,22 @@ typedef struct
 }
 
 void ledDisplay__setClear(ledDisplay_t * stopLight);
+
 void ledDisplay__setStop(ledDisplay_t * stopLight);
+
 void ledDisplay__setSlow(ledDisplay_t * stopLight);
+
 void ledDisplay__setFast(ledDisplay_t * stopLight);
+
 void ledDisplay__setError(ledDisplay_t * stopLight);
+
 void ledDisplay__setFinish(ledDisplay_t * ledDisplay);
+
 void ledDisplay__update(ledDisplay_t * stopLight);
+
 void ledDisplay__init(ledDisplay_t * stopLight);
+
 void ledDisplay__setError(ledDisplay_t * stopLight);
+
 bool ledDisplay__isDone(ledDisplay_t * stopLight);
 

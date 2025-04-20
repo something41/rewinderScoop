@@ -29,7 +29,6 @@ typedef struct {
     .counter = 0, \
 }
 
-
 void sevenSegmentDisplay__init(sevenSegmentDisplay_t * sevenSegmentDisplay);
 
 void sevenSegmentDisplay__update(sevenSegmentDisplay_t * sevenSegmentDisplay);
