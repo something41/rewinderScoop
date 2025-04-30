@@ -21,10 +21,10 @@
 #define JOB_4  CREATE_JOB(340, 20)
 // currently unneeded jobs that can be added later
 #define JOB_5  CREATE_JOB(0, 1)
-#define JOB_6  CREATE_JOB(0, 1)
-#define JOB_7  CREATE_JOB(0, 1)
-#define JOB_8  CREATE_JOB(0, 1)
-#define JOB_9  CREATE_JOB(0, 1)
+#define JOB_6  CREATE_JOB(0, 2)
+#define JOB_7  CREATE_JOB(0, 3)
+#define JOB_8  CREATE_JOB(0, 4)
+#define JOB_9  CREATE_JOB(0, 5)
 
 // Job 10 is the custom job
 #define JOB_10 CREATE_JOB(200, 20)
